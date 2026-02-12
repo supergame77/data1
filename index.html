@@ -229,25 +229,27 @@ textarea{min-height:80px;resize:none}
 <div id="historyTab" style="display:none">
 <h3><i class="bi bi-clock-history"></i> ประวัติงานซ่อม</h3>
 
-<input 
-  id="searchInput" 
-  placeholder="🔍 ค้นหาชื่อลูกค้า หรือ ทะเบียน"
-  style="width:100%;padding:10px;border-radius:12px;border:1px solid #ddd;margin-bottom:12px;"
->
-
 <div style="display:flex; gap:8px; margin-bottom:12px;">
-  <input 
-    type="date" 
-    id="dateFilter"
+  <input
+    id="searchInput" 
+    placeholder="🔍 ค้นหาชื่อลูกค้า หรือ ทะเบียน"
     style="flex:1;padding:10px;border-radius:12px;border:1px solid #ddd;"
   >
-  <button 
-    onclick="filterByDate()"
-    style="padding:10px 14px;border:none;border-radius:12px;background:#e53935;color:#fff;"
+
+  <input 
+    type="date"
+    id="dateFilter"
+    style="padding:10px;border-radius:12px;border:1px solid #ddd;"
   >
-    ค้นหาวันที่
+
+  <button 
+    onclick="clearDateFilter()"
+    style="background:#9e9e9e;color:#fff;border:none;border-radius:12px;padding:0 12px;"
+  >
+    ล้าง
   </button>
 </div>
+
 
       
 <div id="totalBox" style="
@@ -446,6 +448,7 @@ window.saveData = async ()=>{
 };
 
 window.loadHistory = async (keyword = "") => {
+
   let query = supabase
     .from("jobs")
     .select("*")
@@ -456,8 +459,15 @@ window.loadHistory = async (keyword = "") => {
       `name.ilike.%${keyword}%,plate.ilike.%${keyword}%`
     );
   }
+      const dateFilter = document.getElementById("dateFilter");
+
+  if (dateFilter && dateFilter.value) {
+    query = query.eq("date", dateFilter.value);
+  }
 
   const { data, error } = await query;
+
+     
 
 if (error) {
   console.error(error);
@@ -759,13 +769,9 @@ brand.addEventListener('change',()=>{
 });
 
 loadBrands();
-const searchInput = document.getElementById("searchInput");
 
-if (searchInput) {
-  searchInput.addEventListener("input", (e) => {
-    loadHistory(e.target.value);
-  });
-}
+
+
   
   let scale = 1;
   
@@ -870,54 +876,38 @@ async function compressImage(file, maxWidth = 800, quality = 0.6) {
   });
 }
 
-window.filterByDate = async function(){
 
-  const selectedDate = document.getElementById("dateFilter").value;
 
-  if(!selectedDate){
-    alert("กรุณาเลือกวันที่");
-    return;
-  }
-
-  const { data, error } = await supabase
-    .from("jobs")
-    .select("*")
-    .eq("date", selectedDate)   // 🔥 ใช้ column date ของคุณ
-    .order("createdat", { ascending: false });
-
-  if(error){
-    console.error(error);
-    alert("โหลดข้อมูลไม่สำเร็จ");
-    return;
-  }
-
-  let html = "";
-  let total = 0;
-
-  data?.forEach(i => {
-    const itemPrice = parseFloat(i.price) || 0;
-    total += itemPrice;
-
-    html += `
-      <div style="background:#fff;padding:16px;margin-bottom:14px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,.06);">
-        <b>${i.name}</b><br>
-        ${i.plate} <br>
-        ${i.brand} ${i.model} <br>
-        ${new Date(i.date).toLocaleDateString("th-TH")} <br>
-        <b style="color:#e53935">${itemPrice.toLocaleString()} บาท</b>
-      </div>
-    `;
-  });
-
-  historyList.innerHTML = html || "ไม่มีข้อมูลของวันที่นี้";
-
-  document.getElementById("totalBox").innerHTML =
-    `<i class="bi bi-cash-stack"></i> ยอดรวมทั้งหมด: ${total.toLocaleString()} บาท`;
-}
 console.log("NEW VERSION LOADED");  
+
+const searchInput = document.getElementById("searchInput");
+const dateFilter = document.getElementById("dateFilter");
+
+if (searchInput) {
+  searchInput.addEventListener("input", (e) => {
+    loadHistory(e.target.value);
+  });
+}
+
+if (dateFilter) {
+  dateFilter.addEventListener("change", () => {
+    loadHistory(searchInput.value);
+  });
+}      
+
+      window.clearDateFilter = function() {
+  const dateFilter = document.getElementById("dateFilter");
+  const searchInput = document.getElementById("searchInput");
+
+  dateFilter.value = "";
+  loadHistory(searchInput ? searchInput.value : "");
+};
+
+      
 </script>
 </body>
 </html>
+
 
 
 
