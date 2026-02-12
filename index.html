@@ -30,7 +30,16 @@ textarea{min-height:80px;resize:none}
 .money-wrapper{position:relative}
 .money-wrapper .unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#666}
 .tab-indicator{position:absolute;top:6px;bottom:6px;left:6px;width:calc(50% - 6px);background:#e53935;border-radius:12px;transition:.25s;z-index:0}
-.preview-img{width:100%;margin-top:8px;border-radius:12px}
+.preview-img{width:100%;margin-top:8px;border-radius:12px;max-height:200px;object-fit:cover}
+.image-wrapper{position:relative}
+.remove-img{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:32px;height:32px;box-shadow:0 2px 6px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;color:#e53935;font-size:16px;cursor:pointer}
+.action-row{display:flex;gap:10px;margin-top:14px}
+.reset-btn{flex:1;background:#9e9e9e;color:#fff;border:none;border-radius:16px;padding:14px;font-size:15px;font-weight:500}
+@media(max-width:480px){
+  .row{flex-direction:column}
+  .container{padding:12px}
+  .card{padding:14px}
+}
 </style>
 </head>
 <body>
@@ -96,17 +105,26 @@ textarea{min-height:80px;resize:none}
 <div class="upload car" onclick="document.getElementById('carImage').click()">
 <i class="bi bi-image"></i> เลือกรูปรถ
 <input type="file" id="carImage" hidden accept="image/*">
+<div class="image-wrapper">
 <img id="carPreview" class="preview-img" />
+<button type="button" class="remove-img" id="removeCar" style="display:none"><i class="bi bi-x"></i></button>
+</div>
 </div>
 
 <label>อัปโหลดบิล</label>
 <div class="upload bill" onclick="document.getElementById('billImage').click()">
 <i class="bi bi-receipt"></i> เลือกรูปบิล
 <input type="file" id="billImage" hidden accept="image/*">
+<div class="image-wrapper">
 <img id="billPreview" class="preview-img" />
+<button type="button" class="remove-img" id="removeBill" style="display:none"><i class="bi bi-x"></i></button>
+</div>
 </div>
 
-<button class="submit" onclick="saveData()">บันทึกงาน</button>
+<div class="action-row">
+<button class="reset-btn" type="button" onclick="resetForm()">รีเซต</button>
+<button class="submit" type="button" onclick="saveData()">บันทึกงาน</button>
+</div>
 </div>
 </div>
 
@@ -145,7 +163,9 @@ const price = document.getElementById("price");
 const carImage = document.getElementById("carImage");
 const billImage = document.getElementById("billImage");
 const carPreview = document.getElementById("carPreview");
+const removeCar = document.getElementById("removeCar");
 const billPreview = document.getElementById("billPreview");
+const removeBill = document.getElementById("removeBill");
 const historyList = document.getElementById("historyList");
 const formTab = document.getElementById("formTab");
 const historyTab = document.getElementById("historyTab");
@@ -186,8 +206,42 @@ function readImage(input, callback){
   reader.readAsDataURL(file);
 }
 
-carImage.onchange = ()=> readImage(carImage,(src)=>{ carBase64=src; carPreview.src=src; });
-billImage.onchange = ()=> readImage(billImage,(src)=>{ billBase64=src; billPreview.src=src; });
+carImage.onchange = ()=> readImage(carImage,(src)=>{ carBase64=src; carPreview.src=src; removeCar.style.display='flex'; });
+billImage.onchange = ()=> readImage(billImage,(src)=>{ billBase64=src; billPreview.src=src; removeBill.style.display='flex'; });
+
+removeCar.onclick = ()=>{
+  carBase64="";
+  carPreview.src="";
+  carImage.value="";
+  removeCar.style.display='none';
+};
+
+removeBill.onclick = ()=>{
+  billBase64="";
+  billPreview.src="";
+  billImage.value="";
+  removeBill.style.display='none';
+};
+
+window.resetForm = function(){
+  name.value="";
+  date.value="";
+  plate.value="";
+  phone.value="";
+  brand.value="";
+  model.innerHTML='<option value="">เลือกรุ่น</option>';
+  year.value="";
+  beforeDetail.value="";
+  afterDetail.value="";
+  price.value="";
+  carBase64="";
+  billBase64="";
+  carPreview.src="";
+  billPreview.src="";
+  removeCar.style.display='none';
+  removeBill.style.display='none';
+  editingId=null;
+};
 
 window.saveData = async ()=>{
   try{
