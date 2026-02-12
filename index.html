@@ -513,12 +513,28 @@ const searchInput = document.getElementById("searchInput");
 searchInput.addEventListener("input", (e) => {
   loadHistory(e.target.value);
 });
+
+window.openImage = function(url){
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("modalImg");
+
+  img.src = url;
+  modal.classList.add("show");
+};
+
+document.getElementById("imageModal")
+  .addEventListener("click", ()=>{
+    document.getElementById("imageModal")
+      .classList.remove("show");
+});
+  
 </script>
 <div id="imageModal" class="modal-overlay">
   <img id="modalImg" class="modal-img">
 </div>  
 </body>
 </html>
+
 
 
 
