@@ -131,6 +131,28 @@ appId: "1:1021919346596:web:ad5915eac27ff5535c8b31"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ===== DOM Elements ===== */
+const name = document.getElementById("name");
+const date = document.getElementById("date");
+const plate = document.getElementById("plate");
+const phone = document.getElementById("phone");
+const brand = document.getElementById("brand");
+const model = document.getElementById("model");
+const year = document.getElementById("year");
+const beforeDetail = document.getElementById("beforeDetail");
+const afterDetail = document.getElementById("afterDetail");
+const price = document.getElementById("price");
+const carImage = document.getElementById("carImage");
+const billImage = document.getElementById("billImage");
+const carPreview = document.getElementById("carPreview");
+const billPreview = document.getElementById("billPreview");
+const historyList = document.getElementById("historyList");
+const formTab = document.getElementById("formTab");
+const historyTab = document.getElementById("historyTab");
+const tabForm = document.getElementById("tabForm");
+const tabHistory = document.getElementById("tabHistory");
+const tabIndicator = document.getElementById("tabIndicator");
+
 /* ===== รุ่นรถตามยี่ห้อ ===== */
 const carData = {
   Toyota:["Revo","Vios","Fortuner","Yaris"],
