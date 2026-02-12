@@ -137,12 +137,26 @@ textarea{min-height:80px;resize:none}
 }
 
 .status-option{
-  cursor:pointer;
+  width:45%;          /* 👈 ทำให้แถวละ 2 ปุ่ม */
+  display:flex;
+  justify-content:center;
 }
 
 .status-option input{
   display:none;
 }
+
+.status-badge{
+  width:100%;
+  text-align:center;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  height:42px;
+  border-radius:999px;
+}      
 
 /* ค่าเริ่มต้น = สีเทา */
 .status-badge {
@@ -317,15 +331,9 @@ input[type="date"]{
 
 .status-row{
   display:flex;
-  justify-content:flex-start;
-  align-items:center;
-  flex-wrap:nowrap;        /* 👈 ไม่ให้ขึ้นบรรทัดใหม่ */
+  flex-wrap:wrap;              /* 👈 ให้ขึ้นบรรทัดใหม่ได้ */
+  justify-content:center;      /* 👈 จัดกลาง */
   gap:12px;
-  margin-top:16px;
-  margin-bottom:24px;
-
-  overflow-x:auto;         /* 👈 เลื่อนซ้ายขวาได้ */
-  white-space:nowrap;
 }
 
 .history-status-row{
@@ -1361,6 +1369,7 @@ window.filterByStatus = function(){
 </script>
 </body>
 </html>
+
 
 
 
