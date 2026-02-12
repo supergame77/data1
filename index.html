@@ -91,6 +91,12 @@ textarea{min-height:80px;resize:none}
 .modal-overlay.show .modal-img{
   transform:scale(1);
 }
+#historyList{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+  
 </style>
 </head>
 <body>
@@ -501,10 +507,11 @@ total += itemPrice;
       <i class="bi bi-trash"></i>
     </button>
 
-</div>
+ 
       </div>
-
+     </div>
     </div>
+   </div> 
     `;
   });
 
@@ -693,6 +700,7 @@ function getDistance(touches){
 </script>
 </body>
 </html>
+
 
 
 
