@@ -181,7 +181,7 @@ let billURL = "";
 
 async function uploadImage(file) {
     const cloudName = "djvicknsm";
-    const uploadPreset = "garage";
+    const uploadPreset = "garage"; // ต้องเป็น Unsigned Upload Preset ใน Cloudinary
 
     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
@@ -195,6 +195,12 @@ async function uploadImage(file) {
     });
 
     const data = await response.json();
+
+    if (!response.ok) {
+        console.error("Cloudinary error:", data);
+        alert("อัปโหลดไม่สำเร็จ: " + (data?.error?.message || "Unauthorized (ตรวจสอบ Upload Preset)"));
+        throw new Error("Upload failed");
+    }
 
     if (!data.secure_url) {
         console.error(data);
