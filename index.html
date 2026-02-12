@@ -962,16 +962,15 @@ let currentKeyword = "";
 let currentDate = "";
 
 if (searchDateBtn) {
-searchDateBtn.addEventListener("click", () => {
-  const selectedDate = searchDate.value;
-  const keyword = searchInput.value;
+  searchDateBtn.addEventListener("click", () => {
+    currentKeyword = searchInput.value;
+    currentDate = searchDate.value;
 
-  console.log("keyword:", keyword);
-  console.log("วันที่ที่เลือก:", selectedDate);
-
-  loadHistory(keyword, selectedDate);
-});
+    loadHistory(currentKeyword, currentDate);
+  });
 }
+
+ 
 
 if (searchInput) {
   searchInput.addEventListener("input", (e) => {
@@ -1098,6 +1097,9 @@ const clearFilterBtn = document.getElementById("clearFilterBtn");
 
 if (clearFilterBtn) {
   clearFilterBtn.addEventListener("click", () => {
+    currentKeyword = "";
+    currentDate = "";
+
     searchInput.value = "";
     searchDate.value = "";
 
@@ -1117,6 +1119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
