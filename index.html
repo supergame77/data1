@@ -135,22 +135,14 @@ textarea{min-height:80px;resize:none}
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const firebaseConfig = {
-apiKey: "AIzaSyCmj37F4VLFX_SkNWwPFR2xODdU7D77eKg",
-authDomain: "garage-system-c15b6.firebaseapp.com",
-projectId: "garage-system-c15b6",
-storageBucket: "garage-system-c15b6.appspot.com",
-messagingSenderId: "1021919346596",
-appId: "1:1021919346596:web:ad5915eac27ff5535c8b31"
-};
+// ======= ใส่ค่าของคุณตรงนี้ =======
+const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_ANON_KEY";
+// ==================================
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const name = document.getElementById("name");
 const date = document.getElementById("date");
@@ -179,36 +171,23 @@ let editingId = null;
 let carURL = "";
 let billURL = "";
 
-async function uploadImage(file) {
-    const cloudName = "djvicknsm";
-    const uploadPreset = "garage"; // ต้องเป็น Unsigned Upload Preset ใน Cloudinary
+// ===== Upload รูปไป Supabase Storage =====
+async function uploadImage(file, folder) {
+  const fileName = `${Date.now()}_${file.name}`;
+  const { error } = await supabase.storage
+    .from("garage")
+    .upload(`${folder}/${fileName}`, file);
 
-    const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+  if (error) {
+    alert("อัปโหลดรูปไม่สำเร็จ: " + error.message);
+    throw error;
+  }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
+  const { data } = supabase.storage
+    .from("garage")
+    .getPublicUrl(`${folder}/${fileName}`);
 
-    const response = await fetch(url, {
-        method: "POST",
-        body: formData
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        console.error("Cloudinary error:", data);
-        alert("อัปโหลดไม่สำเร็จ: " + (data?.error?.message || "Unauthorized (ตรวจสอบ Upload Preset)"));
-        throw new Error("Upload failed");
-    }
-
-    if (!data.secure_url) {
-        console.error(data);
-        alert("อัปโหลดรูปไม่สำเร็จ");
-        throw new Error("Upload failed");
-    }
-
-    return data.secure_url;
+  return data.publicUrl;
 }
 
 carImage.onchange = ()=>{
@@ -240,7 +219,6 @@ removeBill.onclick = ()=>{
 };
 
 window.resetForm = function(){
-  document.querySelector("form")?.reset();
   name.value="";
   date.value="";
   plate.value="";
@@ -268,31 +246,30 @@ window.saveData = async ()=>{
     const carFile = carImage.files[0];
     const billFile = billImage.files[0];
 
-    if(carFile) carURL = await uploadImage(carFile);
-    if(billFile) billURL = await uploadImage(billFile);
+    if(carFile) carURL = await uploadImage(carFile, "cars");
+    if(billFile) billURL = await uploadImage(billFile, "bills");
 
     const data = {
-      name: name.value || "",
-      date: date.value || "",
-      plate: plate.value || "",
-      phone: phone.value || "",
-      brand: brand.value || "",
-      model: model.value || "",
-      year: year.value || "",
-      beforeDetail: beforeDetail.value || "",
-      afterDetail: afterDetail.value || "",
-      price: price.value || "0",
+      name: name.value,
+      date: date.value,
+      plate: plate.value,
+      phone: phone.value,
+      brand: brand.value,
+      model: model.value,
+      year: year.value,
+      beforeDetail: beforeDetail.value,
+      afterDetail: afterDetail.value,
+      price: price.value,
       carImage: carURL,
       billImage: billURL,
-      createdAt: new Date()
+      createdAt: new Date().toISOString()
     };
 
-
     if(editingId){
-      await updateDoc(doc(db,"jobs",editingId), data);
+      await supabase.from("jobs").update(data).eq("id", editingId);
       editingId=null;
     }else{
-      await addDoc(collection(db,"jobs"), data);
+      await supabase.from("jobs").insert([data]);
     }
 
     alert("บันทึกสำเร็จ");
@@ -300,15 +277,17 @@ window.saveData = async ()=>{
 
   }catch(error){
     console.error(error);
-    alert("เกิดข้อผิดพลาด ดู Console");
   }
 };
 
 window.loadHistory = async ()=>{
-  const snap = await getDocs(collection(db,"jobs"));
+  const { data } = await supabase
+    .from("jobs")
+    .select("*")
+    .order("createdAt", { ascending: false });
+
   let html = "";
-  snap.forEach(d=>{
-    const i = d.data();
+  data?.forEach(i=>{
     html += `<div style='background:#fff;padding:12px;margin-bottom:10px;border-radius:12px;'>
     <b>${i.name || '-'}</b><br>
     🚗 ${i.brand || ''} ${i.model || ''}<br>
@@ -316,8 +295,8 @@ window.loadHistory = async ()=>{
     💰 ${i.price || 0} บาท<br>
     ${i.carImage?`<img src='${i.carImage}' style='width:100%;margin-top:6px;border-radius:8px;'>`:''}
     ${i.billImage?`<button onclick="window.open('${i.billImage}','_blank')">ดูบิล</button>`:''}
-    <button onclick="editData('${d.id}')">แก้ไข</button>
-    <button onclick="deleteData('${d.id}')">ลบ</button>
+    <button onclick="editData('${i.id}')">แก้ไข</button>
+    <button onclick="deleteData('${i.id}')">ลบ</button>
     </div>`;
   });
   historyList.innerHTML = html || "ยังไม่มีข้อมูล";
@@ -325,29 +304,29 @@ window.loadHistory = async ()=>{
 
 window.deleteData = async (id)=>{
   if(!confirm("ยืนยันลบ?")) return;
-  await deleteDoc(doc(db,"jobs",id));
+  await supabase.from("jobs").delete().eq("id", id);
   loadHistory();
 };
 
 window.editData = async (id)=>{
-  const snap = await getDoc(doc(db,"jobs",id));
-  if(!snap.exists()) return;
-  const i = snap.data();
-  name.value=i.name||"";
-  date.value=i.date||"";
-  plate.value=i.plate||"";
-  phone.value=i.phone||"";
-  brand.value=i.brand||"";
+  const { data } = await supabase.from("jobs").select("*").eq("id", id).single();
+  if(!data) return;
+
+  name.value=data.name||"";
+  date.value=data.date||"";
+  plate.value=data.plate||"";
+  phone.value=data.phone||"";
+  brand.value=data.brand||"";
   brand.dispatchEvent(new Event('change'));
-  model.value=i.model||"";
-  year.value=i.year||"";
-  beforeDetail.value=i.beforeDetail||"";
-  afterDetail.value=i.afterDetail||"";
-  price.value=i.price||"";
-  carPreview.src=i.carImage||"";
-  billPreview.src=i.billImage||"";
-  carURL=i.carImage||"";
-  billURL=i.billImage||"";
+  model.value=data.model||"";
+  year.value=data.year||"";
+  beforeDetail.value=data.beforeDetail||"";
+  afterDetail.value=data.afterDetail||"";
+  price.value=data.price||"";
+  carPreview.src=data.carImage||"";
+  billPreview.src=data.billImage||"";
+  carURL=data.carImage||"";
+  billURL=data.billImage||"";
   editingId=id;
   showTab('form');
 };
