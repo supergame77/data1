@@ -48,12 +48,12 @@
 }
       
 
-@media (max-width: 480px){
-  .search-date{
+@media (max-width:480px){
+  #searchDate{
     width:100% !important;
-    min-width:100% !important;
   }
 }
+
       
 
 .search-date::-webkit-calendar-picker-indicator{
@@ -252,7 +252,12 @@ textarea{min-height:80px;resize:none}
 .btn-clear{
   background:#9e9e9e;
 }
-  
+      
+#searchDate{
+  width:100% !important;
+  display:block;
+}  
+      
 </style>
 </head>
 <body>
@@ -974,11 +979,8 @@ if (searchDate) {
 
 if (openDateBtn && searchDate) {
   openDateBtn.addEventListener("click", () => {
-    if (searchDate.showPicker) {
-      searchDate.showPicker();
-    } else {
-      searchDate.focus();
-    }
+    searchDate.focus();
+    searchDate.click();
   });
 }
       
@@ -1136,5 +1138,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
