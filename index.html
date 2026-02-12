@@ -459,11 +459,11 @@ window.loadHistory = async (keyword = "") => {
       `name.ilike.%${keyword}%,plate.ilike.%${keyword}%`
     );
   }
-      const dateFilter = document.getElementById("dateFilter");
+      const dateFilterEl = document.getElementById("dateFilter");
 
-  if (dateFilter && dateFilter.value) {
-    query = query.eq("date", dateFilter.value);
-  }
+  if (dateFilterEl && dateFilterEl.value) {
+  query = query.eq("date", dateFilterEl.value);
+}
 
   const { data, error } = await query;
 
@@ -896,17 +896,31 @@ if (dateFilter) {
 }      
 
       window.clearDateFilter = function() {
-  const dateFilter = document.getElementById("dateFilter");
-  const searchInput = document.getElementById("searchInput");
+  document.addEventListener("DOMContentLoaded", () => {
 
-  dateFilter.value = "";
-  loadHistory(searchInput ? searchInput.value : "");
-};
+  const searchInputEl = document.getElementById("searchInput");
+  const dateFilterEl = document.getElementById("dateFilter");
+
+  if (searchInputEl) {
+    searchInputEl.addEventListener("input", (e) => {
+      loadHistory(e.target.value);
+    });
+  }
+
+  if (dateFilterEl) {
+    dateFilterEl.addEventListener("change", () => {
+      loadHistory(searchInputEl ? searchInputEl.value : "");
+    });
+  }
+
+});
+
 
       
 </script>
 </body>
 </html>
+
 
 
 
