@@ -1,37 +1,379 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Supabase Test</title>
-
-  <!-- Supabase CDN (ต้องมีบรรทัดนี้ก่อนใช้ createClient) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ระบบจัดการอู่</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔧</text></svg>">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Kanit',system-ui,sans-serif!important}
+body{margin:0;background:#f5f7fb}
+.container{max-width:420px;margin:auto;padding:16px}
+.tabs{background:#fff;border-radius:14px;display:flex;padding:6px;margin-bottom:16px;position:relative;overflow:hidden}
+.tab{z-index:1;flex:1;text-align:center;padding:10px;border-radius:12px;color:#666;font-size:14px;cursor:pointer}
+.tab.active{color:#fff;font-weight:600}
+h3{margin:10px 0;color:#e53935;font-size:18px;text-align:center}
+.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.row{display:flex;gap:8px;margin-bottom:12px}
+.col{flex:1}
+label{font-size:13px;color:#555}
+input,select,textarea{width:100%;padding:10px;margin-top:4px;border-radius:12px;border:1px solid #ddd;font-size:14px;box-sizing:border-box}
+input::placeholder, textarea::placeholder{color:#aaa;font-weight:300}
+textarea{min-height:80px;resize:none}
+.upload{border:2px dashed #e53935;border-radius:16px;padding:18px;text-align:center;margin-top:12px;font-weight:500;cursor:pointer}
+.upload.car{border-color:#2196f3;color:#2196f3;background:#e3f2fd}
+.upload.bill{border-color:#e53935;color:#e53935;background:#fdecea}
+.submit{margin-top:16px;width:100%;background:#2196f3;color:#fff;border:none;border-radius:16px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .08s ease, box-shadow .08s ease}
+.submit:active{transform:scale(0.95);box-shadow:0 2px 6px rgba(0,0,0,.2) inset}
+.money-wrapper{position:relative}
+.money-wrapper .unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#666}
+.tab-indicator{position:absolute;top:6px;bottom:6px;left:6px;width:calc(50% - 6px);background:#e53935;border-radius:12px;transition:.25s;z-index:0}
+.preview-img{width:100%;margin-top:8px;border-radius:12px;max-height:200px;object-fit:cover}
+.image-wrapper{position:relative}
+.remove-img{position:absolute;top:8px;right:8px;background:#fff;border:none;border-radius:50%;width:32px;height:32px;box-shadow:0 2px 6px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;color:#e53935;font-size:16px;cursor:pointer}
+.action-row{display:flex;gap:10px;margin-top:14px}
+.reset-btn{flex:1;background:#9e9e9e;color:#fff;border:none;border-radius:16px;padding:14px;font-size:15px;font-weight:500}
+@media(max-width:480px){
+  .row{flex-direction:column}
+  .container{padding:12px}
+  .card{padding:14px}
+}
+</style>
 </head>
 <body>
-  <h2>Supabase Connected ✅</h2>
+<div class="container">
+<h2 style="text-align:center;margin:6px 0 14px;color:#2196f3"><i class="bi bi-speedometer2"></i> เกมส์ คอมมอนเรล</h2>
+<div class="tabs">
+<div class="tab-indicator" id="tabIndicator"></div>
+<div class="tab active" id="tabForm"><i class="bi bi-tools"></i> งานซ่อม</div>
+<div class="tab" id="tabHistory"><i class="bi bi-clock-history"></i> ประวัติ</div>
+</div>
 
-  <script>
-    // ดึง createClient จาก window.supabase
-    const { createClient } = window.supabase;
+<div id="formTab">
+<h3><i class="bi bi-tools"></i> บันทึกงานซ่อม</h3>
+<div class="card">
 
-    const SUPABASE_URL = "https://qasuckitplvdnghjvajy.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_KZ4eAHfXbNcFvL-Dbn2UuQ_v-NdJriJ";
+<label>ชื่อลูกค้า</label>
+<input id="name" placeholder="เช่น สมชาย ใจดี">
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<!-- แถวที่ 2 -->
+<div class="row">
+  <div class="col">
+    <label>วันที่</label>
+    <input type="date" id="date" placeholder="เลือกวันที่">
+  </div>
+  <div class="col">
+    <label>ทะเบียน</label>
+    <input id="plate" placeholder="เช่น กข 1234">
+  </div>
+  <div class="col">
+    <label>เบอร์โทร</label>
+    <input id="phone" placeholder="เช่น 0812345678">
+  </div>
+</div>
 
-    // ทดสอบเชื่อมต่อ
-    async function testConnection() {
-      const { data, error } = await supabase.from('jobs').select('*').limit(1);
+<!-- แถวที่ 3 -->
+<div class="row">
+  <div class="col">
+    <label>ยี่ห้อ</label>
+    <select id="brand"></select>
+  </div>
+  <div class="col">
+    <label>รุ่นรถ</label>
+    <select id="model"></select>
+  </div>
+  <div class="col">
+    <label>ปีรถ</label>
+    <input id="year" placeholder="เช่น 2022">
+  </div>
+</div>
 
-      if (error) {
-        console.error('Connection error:', error);
-      } else {
-        console.log('Connected successfully:', data);
-      }
+<label>รายละเอียดก่อนซ่อม</label>
+<textarea id="beforeDetail" placeholder="อาการก่อนซ่อม เช่น สตาร์ทไม่ติด ควันดำ"></textarea>
+
+<label>รายละเอียดหลังซ่อม</label>
+<textarea id="afterDetail" placeholder="รายละเอียดงานที่ทำ เช่น เปลี่ยนหัวฉีด ล้างระบบ"></textarea>
+
+<label>ยอดเงิน</label>
+<div class="money-wrapper">
+<input id="price" placeholder="เช่น 3500"><span class="unit">บาท</span>
+</div>
+
+<label>อัปโหลดรูปรถ</label>
+<div class="upload car" onclick="document.getElementById('carImage').click()">
+<i class="bi bi-image"></i> เลือกรูปรถ
+<input type="file" id="carImage" hidden accept="image/*">
+<div class="image-wrapper">
+<img id="carPreview" class="preview-img" />
+<button type="button" class="remove-img" id="removeCar" style="display:none"><i class="bi bi-x"></i></button>
+</div>
+</div>
+
+<label>อัปโหลดบิล</label>
+<div class="upload bill" onclick="document.getElementById('billImage').click()">
+<i class="bi bi-receipt"></i> เลือกรูปบิล
+<input type="file" id="billImage" hidden accept="image/*">
+<div class="image-wrapper">
+<img id="billPreview" class="preview-img" />
+<button type="button" class="remove-img" id="removeBill" style="display:none"><i class="bi bi-x"></i></button>
+</div>
+</div>
+
+<div class="action-row">
+<button class="reset-btn" type="button" onclick="resetForm()">รีเซต</button>
+<button class="submit" type="button" onclick="saveData()">บันทึกงาน</button>
+</div>
+</div>
+</div>
+
+<div id="historyTab" style="display:none">
+<h3><i class="bi bi-clock-history"></i> ประวัติงานซ่อม</h3>
+<div id="historyList"></div>
+</div>
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+// ======= ใส่ค่าของคุณตรงนี้ =======
+const SUPABASE_URL = "https://qasuckitplvdnghjvajy.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_KZ4eAHfXbNcFvL-Dbn2UuQ_v-NdJriJ";
+// ==================================
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const name = document.getElementById("name");
+const date = document.getElementById("date");
+const plate = document.getElementById("plate");
+const phone = document.getElementById("phone");
+const brand = document.getElementById("brand");
+const model = document.getElementById("model");
+const year = document.getElementById("year");
+const beforeDetail = document.getElementById("beforeDetail");
+const afterDetail = document.getElementById("afterDetail");
+const price = document.getElementById("price");
+const carImage = document.getElementById("carImage");
+const billImage = document.getElementById("billImage");
+const carPreview = document.getElementById("carPreview");
+const removeCar = document.getElementById("removeCar");
+const billPreview = document.getElementById("billPreview");
+const removeBill = document.getElementById("removeBill");
+const historyList = document.getElementById("historyList");
+const formTab = document.getElementById("formTab");
+const historyTab = document.getElementById("historyTab");
+const tabForm = document.getElementById("tabForm");
+const tabHistory = document.getElementById("tabHistory");
+const tabIndicator = document.getElementById("tabIndicator");
+
+let editingId = null;
+let carURL = "";
+let billURL = "";
+
+// ===== Upload รูปไป Supabase Storage =====
+async function uploadImage(file, folder) {
+  const fileName = `${Date.now()}_${file.name}`;
+  const { error } = await supabase.storage
+    .from("garage")
+    .upload(`${folder}/${fileName}`, file);
+
+  if (error) {
+    alert("อัปโหลดรูปไม่สำเร็จ: " + error.message);
+    throw error;
+  }
+
+  const { data } = supabase.storage
+    .from("garage")
+    .getPublicUrl(`${folder}/${fileName}`);
+
+  return data.publicUrl;
+}
+
+carImage.onchange = ()=>{
+  const file = carImage.files[0];
+  if(!file) return;
+  carPreview.src = URL.createObjectURL(file);
+  removeCar.style.display='flex';
+};
+
+billImage.onchange = ()=>{
+  const file = billImage.files[0];
+  if(!file) return;
+  billPreview.src = URL.createObjectURL(file);
+  removeBill.style.display='flex';
+};
+
+removeCar.onclick = ()=>{
+  carImage.value="";
+  carPreview.src="";
+  removeCar.style.display='none';
+  carURL="";
+};
+
+removeBill.onclick = ()=>{
+  billImage.value="";
+  billPreview.src="";
+  removeBill.style.display='none';
+  billURL="";
+};
+
+window.resetForm = function(){
+  name.value="";
+  date.value="";
+  plate.value="";
+  phone.value="";
+  brand.value="";
+  model.innerHTML='<option value="">เลือกรุ่น</option>';
+  year.value="";
+  beforeDetail.value="";
+  afterDetail.value="";
+  price.value="";
+  carPreview.src="";
+  billPreview.src="";
+  removeCar.style.display='none';
+  removeBill.style.display='none';
+  editingId=null;
+};
+
+window.saveData = async ()=>{
+  try{
+    if(!name.value){
+      alert("กรุณากรอกชื่อลูกค้า");
+      return;
     }
 
-    testConnection();
-  </script>
+    const carFile = carImage.files[0];
+    const billFile = billImage.files[0];
+
+    if(carFile) carURL = await uploadImage(carFile, "cars");
+    if(billFile) billURL = await uploadImage(billFile, "bills");
+
+    const data = {
+      name: name.value,
+      date: date.value,
+      plate: plate.value,
+      phone: phone.value,
+      brand: brand.value,
+      model: model.value,
+      year: year.value,
+      beforeDetail: beforeDetail.value,
+      afterDetail: afterDetail.value,
+      price: price.value,
+      carImage: carURL,
+      billImage: billURL,
+      createdAt: new Date().toISOString()
+    };
+
+    if(editingId){
+      await supabase.from("jobs").update(data).eq("id", editingId);
+      editingId=null;
+    }else{
+      await supabase.from("jobs").insert([data]);
+    }
+
+    alert("บันทึกสำเร็จ");
+    showTab('history');
+
+  }catch(error){
+    console.error(error);
+  }
+};
+
+window.loadHistory = async ()=>{
+  const { data } = await supabase
+    .from("jobs")
+    .select("*")
+    .order("createdAt", { ascending: false });
+
+  let html = "";
+  data?.forEach(i=>{
+    html += `<div style='background:#fff;padding:12px;margin-bottom:10px;border-radius:12px;'>
+    <b>${i.name || '-'}</b><br>
+    🚗 ${i.brand || ''} ${i.model || ''}<br>
+    🏷 ${i.plate || '-'}<br>
+    💰 ${i.price || 0} บาท<br>
+    ${i.carImage?`<img src='${i.carImage}' style='width:100%;margin-top:6px;border-radius:8px;'>`:''}
+    ${i.billImage?`<button onclick="window.open('${i.billImage}','_blank')">ดูบิล</button>`:''}
+    <button onclick="editData('${i.id}')">แก้ไข</button>
+    <button onclick="deleteData('${i.id}')">ลบ</button>
+    </div>`;
+  });
+  historyList.innerHTML = html || "ยังไม่มีข้อมูล";
+};
+
+window.deleteData = async (id)=>{
+  if(!confirm("ยืนยันลบ?")) return;
+  await supabase.from("jobs").delete().eq("id", id);
+  loadHistory();
+};
+
+window.editData = async (id)=>{
+  const { data } = await supabase.from("jobs").select("*").eq("id", id).single();
+  if(!data) return;
+
+  name.value=data.name||"";
+  date.value=data.date||"";
+  plate.value=data.plate||"";
+  phone.value=data.phone||"";
+  brand.value=data.brand||"";
+  brand.dispatchEvent(new Event('change'));
+  model.value=data.model||"";
+  year.value=data.year||"";
+  beforeDetail.value=data.beforeDetail||"";
+  afterDetail.value=data.afterDetail||"";
+  price.value=data.price||"";
+  carPreview.src=data.carImage||"";
+  billPreview.src=data.billImage||"";
+  carURL=data.carImage||"";
+  billURL=data.billImage||"";
+  editingId=id;
+  showTab('form');
+};
+
+function showTab(tab){
+  formTab.style.display = tab==='form'?'block':'none';
+  historyTab.style.display = tab==='history'?'block':'none';
+  tabForm.classList.remove('active');
+  tabHistory.classList.remove('active');
+  if(tab==='form'){
+    tabForm.classList.add('active');
+    tabIndicator.style.transform='translateX(0%)';
+  }else{
+    tabHistory.classList.add('active');
+    tabIndicator.style.transform='translateX(100%)';
+    loadHistory();
+  }
+}
+
+tabForm.onclick=()=>showTab('form');
+tabHistory.onclick=()=>showTab('history');
+
+/* ===================== รถยี่ห้อ / รุ่น ===================== */
+const carData = {
+  Toyota: ["Revo","Vios","Yaris","Fortuner","Camry"],
+  Isuzu: ["D-Max","MU-X"],
+  Honda: ["Civic","City","CR-V","Jazz"],
+  Mazda: ["BT-50","Mazda2","Mazda3"],
+  Nissan: ["Navara","Almera","Terra"]
+};
+
+function loadBrands(){
+  brand.innerHTML = '<option value="">เลือกยี่ห้อ</option>';
+  Object.keys(carData).forEach(b=>{
+    brand.innerHTML += `<option value="${b}">${b}</option>`;
+  });
+}
+
+brand.addEventListener('change',()=>{
+  const models = carData[brand.value] || [];
+  model.innerHTML = '<option value="">เลือกรุ่น</option>';
+  models.forEach(m=>{
+    model.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+});
+
+loadBrands();
+</script>
 </body>
 </html>
