@@ -231,6 +231,38 @@ textarea{min-height:80px;resize:none}
 #historyList > div{
   width:100%;
 }
+      
+.filter-btn{
+  flex:1;
+  height:52px;
+  border:none;
+  border-radius:14px;
+  font-size:17px;       /* 🔥 ขนาดใหญ่ขึ้น */
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  color:#fff;
+  transition:.15s;
+}
+
+.filter-btn:active{
+  transform:scale(.96);
+}
+
+.btn-date{
+  background:#ff9800;
+}
+
+.btn-search{
+  background:#2196f3;
+}
+
+.btn-clear{
+  background:#9e9e9e;
+}
   
 </style>
 </head>
@@ -381,34 +413,21 @@ textarea{min-height:80px;resize:none}
       border-radius:12px;
       font-weight:600;
     ">
-    📅 เลือกวันที่
-  </button>
-
-  <button id="searchDateBtn"
-    style="
-      flex:1;
-      height:48px;
-      background:#2196f3;
-      color:#fff;
-      border:none;
-      border-radius:12px;
-      font-weight:600;
-    ">
-    🔍 ค้นหา
-  </button>
-
-  <button id="clearFilterBtn"
-    style="
-      flex:1;
-      height:48px;
-      background:#9e9e9e;
-      color:#fff;
-      border:none;
-      border-radius:12px;
-      font-weight:600;
-    ">
-    ❌ ล้าง
-  </button>
+        
+    <button id="openDateBtn" class="filter-btn btn-date">
+  <i class="bi bi-calendar-event"></i>
+  เลือกวันที่
+</button>
+        
+    <button id="searchDateBtn" class="filter-btn btn-search">
+  <i class="bi bi-search"></i>
+  ค้นหา
+</button>
+        
+    <button id="clearFilterBtn" class="filter-btn btn-clear">
+  <i class="bi bi-x-circle"></i>
+  ล้าง
+</button>
 
 </div>
 
@@ -1120,6 +1139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
