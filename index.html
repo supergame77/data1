@@ -407,7 +407,7 @@ data?.forEach(i => {
   background:#fff;
   padding:18px;
   margin:0 auto 18px;
-  max-width:500px;
+  max-width:450px;
   border-radius:20px;
   box-shadow:0 4px 14px rgba(0,0,0,.06);
   transition:.2s;
@@ -438,8 +438,8 @@ style="
 ">
       ` : `
         <div style="
-          width:120px;
-          height:120px;
+          width:110px;
+          aspect-ratio:1/1;
           background:#eee;
           border-radius:14px;
         "></div>
@@ -801,6 +801,7 @@ async function compressImage(file, maxWidth = 800, quality = 0.6) {
 </script>
 </body>
 </html>
+
 
 
 
