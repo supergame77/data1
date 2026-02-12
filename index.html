@@ -179,11 +179,30 @@ let editingId = null;
 let carURL = "";
 let billURL = "";
 
-async function uploadImage(file, folder){
-  if(!file) return "";
-  const storageRef = ref(storage, `${folder}/${Date.now()}_${file.name}`);
-  await uploadBytes(storageRef, file);
-  return await getDownloadURL(storageRef);
+async function uploadImage(file) {
+    const cloudName = "djvicknsm";
+    const uploadPreset = "garage";
+
+    const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
+
+    const response = await fetch(url, {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    if (!data.secure_url) {
+        console.error(data);
+        alert("อัปโหลดรูปไม่สำเร็จ");
+        throw new Error("Upload failed");
+    }
+
+    return data.secure_url;
 }
 
 carImage.onchange = ()=>{
@@ -235,12 +254,6 @@ window.resetForm = function(){
 
 window.saveData = async ()=>{
   try{
-    // ป้องกันกรณีมีค่า base64 ค้างจากเวอร์ชันเก่า
-    if(!editingId){
-      carURL = "";
-      billURL = "";
-    }
-  try{
     if(!name.value){
       alert("กรุณากรอกชื่อลูกค้า");
       return;
@@ -249,8 +262,8 @@ window.saveData = async ()=>{
     const carFile = carImage.files[0];
     const billFile = billImage.files[0];
 
-    if(carFile) carURL = await uploadImage(carFile,"cars");
-    if(billFile) billURL = await uploadImage(billFile,"bills");
+    if(carFile) carURL = await uploadImage(carFile);
+    if(billFile) billURL = await uploadImage(billFile);
 
     const data = {
       name: name.value || "",
@@ -267,6 +280,22 @@ window.saveData = async ()=>{
       billImage: billURL,
       createdAt: new Date()
     };
+
+    if(editingId){
+      await updateDoc(doc(db,"jobs",editingId), data);
+      editingId=null;
+    }else{
+      await addDoc(collection(db,"jobs"), data);
+    }
+
+    alert("บันทึกสำเร็จ");
+    showTab('history');
+
+  }catch(error){
+    console.error(error);
+    alert("เกิดข้อผิดพลาด ดู Console");
+  }
+};
 
     if(editingId){
       await updateDoc(doc(db,"jobs",editingId), data);
@@ -349,6 +378,32 @@ function showTab(tab){
 
 tabForm.onclick=()=>showTab('form');
 tabHistory.onclick=()=>showTab('history');
+
+/* ===================== รถยี่ห้อ / รุ่น ===================== */
+const carData = {
+  Toyota: ["Revo","Vios","Yaris","Fortuner","Camry"],
+  Isuzu: ["D-Max","MU-X"],
+  Honda: ["Civic","City","CR-V","Jazz"],
+  Mazda: ["BT-50","Mazda2","Mazda3"],
+  Nissan: ["Navara","Almera","Terra"]
+};
+
+function loadBrands(){
+  brand.innerHTML = '<option value="">เลือกยี่ห้อ</option>';
+  Object.keys(carData).forEach(b=>{
+    brand.innerHTML += `<option value="${b}">${b}</option>`;
+  });
+}
+
+brand.addEventListener('change',()=>{
+  const models = carData[brand.value] || [];
+  model.innerHTML = '<option value="">เลือกรุ่น</option>';
+  models.forEach(m=>{
+    model.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+});
+
+loadBrands();
 </script>
 </body>
 </html>
