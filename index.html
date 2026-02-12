@@ -41,6 +41,24 @@
   appearance:none;
 }
 
+searchDate.addEventListener("change", () => {
+  if (!searchDate.value) {
+    dateFullDisplay.textContent = "";
+    return;
+  }
+
+  const d = new Date(searchDate.value);
+
+  const formatted = d.toLocaleDateString("th-TH", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+
+  dateFullDisplay.textContent = formatted;
+});      
+
 @media (max-width: 480px){
   .search-date{
     width:100% !important;
@@ -348,7 +366,7 @@ textarea{min-height:80px;resize:none}
 >
 
 <!-- 📅 ช่องวันที่ (แสดงอย่างเดียว) -->
-<input type="date" id="searchDate" class="search-date">
+<div id="dateFullDisplay" style="margin-bottom:12px; font-size:14px; color:#444;"></div>
 
 <!-- 🔘 ปุ่ม 3 ปุ่ม -->
 <div style="display:flex; gap:8px; margin-bottom:12px;">
@@ -1102,6 +1120,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
