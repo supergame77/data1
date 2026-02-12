@@ -397,26 +397,33 @@ data?.forEach(i => {
   total += itemPrice;
 
   html += `
-  <div style="
-    background:#fff;
-    padding:14px;
-    margin-bottom:14px;
-    border-radius:18px;
-    box-shadow:0 2px 8px rgba(0,0,0,.05);
-  ">
+<div style="
+  background:#fff;
+  padding:18px;
+  margin-bottom:18px;
+  border-radius:20px;
+  box-shadow:0 4px 14px rgba(0,0,0,.06);
+  transition:.2s;
+">
 
-    <div style="display:flex; gap:14px;">
+    <div style="
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+">
 
       ${i.carimage ? `
-        <img src="${i.carimage}"
-          onclick="openImage('${i.carimage}')"
-          style="
-            width:110px;
-            aspect-ratio:1/1;
-            object-fit:cover;
-            border-radius:14px;
-            cursor:pointer;
-          ">
+<img src="${i.carimage}"
+  onclick="openImage('${i.carimage}')"
+  style="
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:16px;
+    flex-shrink:0;
+    cursor:pointer;
+    display:block;
+  ">
       ` : `
         <div style="
           width:110px;
@@ -426,9 +433,19 @@ data?.forEach(i => {
         "></div>
       `}
 
-      <div style="flex:1;font-size:14px;line-height:1.6">
+      <div style="
+  flex:1;
+  font-size:14px;
+  line-height:1.7;
+  padding-right:6px;
+">
 
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+">
           <b style="font-size:16px">${i.name || '-'}</b>
 
           <div style="
@@ -451,12 +468,12 @@ data?.forEach(i => {
           i.date ? new Date(i.date).toLocaleDateString("th-TH") : '-'
         }
 
-        <div style="
-          margin-top:10px;
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-        ">
+<div style="
+  margin-top:14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+">
 
           ${i.billimage ? `
             <button onclick="openImage('${i.billimage}')"
@@ -701,6 +718,7 @@ function getDistance(touches){
 </script>
 </body>
 </html>
+
 
 
 
