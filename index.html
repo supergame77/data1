@@ -510,10 +510,11 @@ brand.addEventListener('change',()=>{
 loadBrands();
 const searchInput = document.getElementById("searchInput");
 
-searchInput.addEventListener("input", (e) => {
-  loadHistory(e.target.value);
-});
-
+if (searchInput) {
+  searchInput.addEventListener("input", (e) => {
+    loadHistory(e.target.value);
+  });
+}
 window.openImage = function(url){
   const modal = document.getElementById("imageModal");
   const img = document.getElementById("modalImg");
@@ -534,6 +535,7 @@ document.getElementById("imageModal")
 </div>  
 </body>
 </html>
+
 
 
 
