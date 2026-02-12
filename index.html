@@ -25,6 +25,10 @@
 
 <style>
 
+
+
+
+
  #searchDate {
   font-size: 18px;
   font-weight: 500;
@@ -140,26 +144,57 @@ textarea{min-height:80px;resize:none}
   display:none;
 }
 
-.status-badge{
-  padding:8px 16px;
-  border-radius:20px;
-  font-size:14px;
-  font-weight:600;
-  color:#fff;
-  display:inline-block;
-  transition:.2s;
+/* ค่าเริ่มต้น = สีเทา */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #e5e5e5;
+  color: #555;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .25s ease;
+  border: 1px solid #ddd;
 }
 
-.status-option input:checked + .status-badge{
-  transform:scale(1.05);
-  box-shadow:0 0 0 3px rgba(0,0,0,.15);
+/* กดแล้วเด้ง */
+.status-option input:checked + .status-badge {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
 }
 
-/* สีแต่ละสถานะ */
-.badge-repair{ background:#ff9800; }      /* กำลังซ่อม */
-.badge-done{ background:#2196f3; }       /* เสร็จแล้ว */
-.badge-unpaid{ background:#f44336; }     /* ยังไม่จ่าย */
-.badge-paid{ background:#2e7d32; }       /* จ่ายแล้ว */
+/* กำลังซ่อม */
+input:checked + .badge-repair {
+  background: #ff4d4f;
+  color: #fff;
+  border-color: #ff4d4f;
+}
+
+/* เสร็จแล้ว */
+input:checked + .badge-done {
+  background: #2ecc71;
+  color: #fff;
+  border-color: #2ecc71;
+}
+
+/* ยังไม่จ่าย */
+input:checked + .badge-unpaid {
+  background: #f39c12;
+  color: #fff;
+  border-color: #f39c12;
+}
+
+/* จ่ายแล้ว */
+input:checked + .badge-paid {
+  background: #3498db;
+  color: #fff;
+  border-color: #3498db;
+}
+
+.status-option input:checked + .status-badge::after {
+  content: " ✓";
+  font-weight: bold;
+}
+
 
 
 
@@ -282,40 +317,111 @@ input[type="date"]{
 
 .status-row{
   display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:14px;
-}
-
-.status-btn{
-  flex:1 1 calc(50% - 4px);
-  display:flex;
+  justify-content:center;   /* 👈 จัดกลาง */
   align-items:center;
-  justify-content:center;
-  height:44px;
-  border-radius:14px;
-  font-weight:600;
-  font-size:14px;
-  cursor:pointer;
-  color:#fff;
-  position:relative;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:16px;
+  margin-bottom:24px;       /* 👈 เว้นระยะการ์ด */
 }
 
-.status-btn input{
+.history-status-row{
+  display:flex;
+  justify-content:center;   /* 👈 จัดกลาง */
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:16px;
+  margin-bottom:24px;       /* 👈 เว้นระยะจากการ์ด */
+}
+
+.filter-status-btn {
+  display:inline-block;
+  margin:8px;
+  cursor:pointer;
+}
+
+.filter-status-btn input{
   display:none;
 }
 
-/* สี */
-.status-btn.working{ background:#ff9800; }
-.status-btn.done{ background:#2196f3; }
-.status-btn.unpaid{ background:#f44336; }
-.status-btn.paid{ background:#2e7d32; }
-
-/* ตอนยังไม่ติ๊กให้จาง */
-.status-btn input:not(:checked) + *{
-  opacity:.5;
+/* 🔘 ค่าเริ่มต้น = สีเทา */
+.filter-status-btn span{
+  padding:8px 20px;
+  border-radius:25px;
+  font-weight:600;
+  background:#e0e0e0;
+  color:#555;
+  display:inline-block;
+  transition:0.25s ease;
 }
-      
+
+/* ✅ ตอนถูกเลือก เปลี่ยนเป็นสีจริง */
+.filter-status-btn.doing input:checked + span{
+  background:#1976d2;
+  color:#fff;
+}
+
+.filter-status-btn.done input:checked + span{
+  background:#2e7d32;
+  color:#fff;
+}
+
+.filter-status-btn.unpaid input:checked + span{
+  background:#ef6c00;
+  color:#fff;
+}
+
+.filter-status-btn.paid input:checked + span{
+  background:#616161;
+  color:#fff;
+}
+
+/* เด้ง */
+.filter-status-btn input:checked + span{
+  transform:scale(1.12);
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* ✓ */
+.filter-status-btn input:checked + span::after{
+  content:" ✓";
+  margin-left:6px;
+  font-weight:bold;
+}
+
+.card-status{
+  padding:8px 18px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:600;
+  background:#e0e0e0;
+  color:#555;
+  display:inline-block;
+}
+
+/* สีจริง */
+.card-status.doing{
+  background:#1976d2;
+  color:#fff;
+}
+
+.card-status.done{
+  background:#2e7d32;
+  color:#fff;
+}
+
+.card-status.unpaid{
+  background:#ef6c00;
+  color:#fff;
+}
+
+.card-status.paid{
+  background:#616161;
+  color:#fff;
+}
+
+     
 </style>
 </head>
 <body>
@@ -379,7 +485,7 @@ input[type="date"]{
 
 
 <label>สถานะงาน</label>
-<div class="status-group">
+<div class="status-row">
 
   <label class="status-option">
     <input type="radio" name="status" value="กำลังซ่อม" checked>
@@ -402,6 +508,8 @@ input[type="date"]{
   </label>
 
 </div>
+
+
 
 
 <label>อัปโหลดรูปรถ</label>
@@ -486,29 +594,32 @@ input[type="date"]{
 </div>
 
 <!-- 👇 วางตรงนี้ -->
-<div class="status-row">
+<div class="history-status-row">
 
-  <label class="status-btn working">
+
+  <label class="status-option">
     <input type="checkbox" value="กำลังซ่อม" onchange="filterByStatus()">
-    กำลังซ่อม
+    <span class="status-badge badge-repair">กำลังซ่อม</span>
   </label>
 
-  <label class="status-btn done">
+  <label class="status-option">
     <input type="checkbox" value="เสร็จแล้ว" onchange="filterByStatus()">
-    เสร็จแล้ว
+    <span class="status-badge badge-done">เสร็จแล้ว</span>
   </label>
 
-  <label class="status-btn unpaid">
+  <label class="status-option">
     <input type="checkbox" value="ยังไม่จ่าย" onchange="filterByStatus()">
-    ยังไม่จ่าย
+    <span class="status-badge badge-unpaid">ยังไม่จ่าย</span>
   </label>
 
-  <label class="status-btn paid">
+  <label class="status-option">
     <input type="checkbox" value="จ่ายแล้ว" onchange="filterByStatus()">
-    จ่ายแล้ว
+    <span class="status-badge badge-paid">จ่ายแล้ว</span>
   </label>
 
-</div>      
+</div>
+
+
 
 
   <!-- 📋 รายการ -->
@@ -680,6 +791,9 @@ const data = {
   }
 };
 
+
+
+
 window.loadHistory = async (keyword = "", selectedDate = "") => {
 
 console.log("keyword:", keyword);
@@ -726,12 +840,12 @@ data?.forEach(i => {
   const itemPrice = parseFloat(i.price) || 0;
   total += itemPrice;
 
-let statusColor = "#2196f3"; // default น้ำเงิน
+let statusColor = "#ff4d4f"; // default แดง
 
-if (i.status === "กำลังซ่อม") statusColor = "#ff9800";     // ส้ม
-if (i.status === "เสร็จแล้ว") statusColor = "#2196f3";        // ฟ้า
-if (i.status === "ยังไม่จ่าย") statusColor = "#f44336";  // แดง
-if (i.status === "จ่ายแล้ว") statusColor = "#2e7d32";    // เขียวเข้ม
+if (i.status === "กำลังซ่อม") statusColor = "#ff4d4f";  // 🔴
+if (i.status === "เสร็จแล้ว") statusColor = "#2ecc71";  // 🟢
+if (i.status === "ยังไม่จ่าย") statusColor = "#f39c12"; // 🟡
+if (i.status === "จ่ายแล้ว") statusColor = "#3498db";  // 🔵
 
   html += `
 <div style="
@@ -1215,9 +1329,8 @@ if (clearFilterBtn) {
 
     // 🔥 เอาติ๊กออกทุกช่อง
     document
-      .querySelectorAll(".status-row input")
-      .forEach(cb => cb.checked = false);
-
+  .querySelectorAll(".history-status-row input")
+  .forEach(cb => cb.checked = false);
     loadHistory("", "");
   });
 }
@@ -1230,22 +1343,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchDate) searchDate.value = currentDate;
 });
     
-function filterByStatus(){
+window.filterByStatus = function(){
 
   currentStatuses = Array.from(
-    document.querySelectorAll('.status-row input:checked')
+    document.querySelectorAll('.history-status-row input:checked')
   ).map(cb => cb.value);
 
-  console.log("สถานะที่เลือก:", currentStatuses); // 👈 เพิ่มบรรทัดนี้
+  console.log("เลือกสถานะ:", currentStatuses);  // 🔥 เพิ่มบรรทัดนี้
 
   loadHistory(currentKeyword, currentDate);
 }
 
-      
+
 </script>
 </body>
 </html>
-
 
 
 
