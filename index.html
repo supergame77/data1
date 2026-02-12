@@ -35,7 +35,19 @@
   font-size:15px;
   box-sizing:border-box;
   background:#fff;
+
+  /* 🔥 ตัวแก้มือถือ */
+  -webkit-appearance:none;
+  appearance:none;
 }
+
+@media (max-width: 480px){
+  .search-date{
+    width:100% !important;
+    min-width:100% !important;
+  }
+}
+      
 
 .search-date::-webkit-calendar-picker-indicator{
   opacity:1;
@@ -1090,6 +1102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
