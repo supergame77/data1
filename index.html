@@ -70,8 +70,14 @@ textarea{min-height:80px;resize:none}
   border-radius:50%;
   font-size:20px;
   box-shadow:0 2px 6px rgba(0,0,0,.3);
+  cursor:pointer;
+  transition:transform .2s ease;
 }  
 
+ .close-btn:hover{
+  transform:scale(1.1);
+}
+  
 .modal-img{
   max-width:100%;
   max-height:85vh;
@@ -378,16 +384,18 @@ if (error) {
 
   data?.forEach(i => {
 
-    total += Number(i.price || 0);
+    const itemPrice = parseFloat(i.price) || 0;
+total += itemPrice;
 
     html += `
-    <div style="
-      background:#fff;
-      padding:14px;
-      margin-bottom:14px;
-      border-radius:18px;
-      box-shadow:0 2px 8px rgba(0,0,0,.05);
-    ">
+<div style="
+  position:relative;
+  background:#fff;
+  padding:14px;
+  margin-bottom:14px;
+  border-radius:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+">
 
       <div style="display:flex; gap:14px;">
 
@@ -420,7 +428,20 @@ if (error) {
           <i class="bi bi-calendar-event"></i> ${
             i.date ? new Date(i.date).toLocaleDateString("th-TH") : '-'
           }<br>
-          <i class="bi bi-cash-coin"></i> ${i.price || 0} บาท
+<div style="
+  position:absolute;
+  top:12px;
+  right:14px;
+  background:#fdecea;
+  color:#e53935;
+  padding:6px 12px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:13px;
+">
+  <i class="bi bi-cash-coin"></i>
+  ${itemPrice.toLocaleString()} บาท
+</div>
 
           ${i.billimage ? `
             <div style="margin-top:8px;">
@@ -441,10 +462,48 @@ if (error) {
         </div>
       </div>
 
-      <div style="margin-top:10px">
-        <button onclick="editData('${i.id}')">แก้ไข</button>
-        <button onclick="deleteData('${i.id}')">ลบ</button>
-      </div>
+      <div style="
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+">
+
+
+
+<button onclick="editData('${i.id}')"
+style="
+  width:40px;
+  height:40px;
+  background:#2196f3;
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+">
+  <i class="bi bi-pencil"></i>
+</button>
+
+<button onclick="deleteData('${i.id}')"
+style="
+  width:40px;
+  height:40px;
+  background:#e53935;
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+">
+  <i class="bi bi-trash"></i>
+</button>
+
+</div>
 
     </div>
     `;
@@ -494,6 +553,24 @@ window.editData = async (id)=>{
   showTab('form');
 };
 
+window.deleteData = async (id)=>{
+  if(!confirm("ยืนยันการลบรายการนี้?")) return;
+
+  const { error } = await supabase
+    .from("jobs")
+    .delete()
+    .eq("id", id);
+
+  if(error){
+    alert("ลบไม่สำเร็จ");
+    console.error(error);
+    return;
+  }
+
+  loadHistory();
+};
+
+  
 function showTab(tab){
   formTab.style.display = tab==='form'?'block':'none';
   historyTab.style.display = tab==='history'?'block':'none';
@@ -617,6 +694,7 @@ function getDistance(touches){
 </script>
 </body>
 </html>
+
 
 
 
