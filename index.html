@@ -429,10 +429,11 @@ data?.forEach(i => {
   '/storage/v1/render/image/public/'
 )}?width=240&quality=70"
 loading="lazy"
-  onclick="openImage('${i.carimage}')"
+onclick="openImage('${i.carimage}')"
 style="
   width:120px;
-  height:120px;
+  height:auto;
+  max-height:120px;
   object-fit:contain;
   background:#f3f3f3;
   border-radius:16px;
@@ -440,6 +441,7 @@ style="
   cursor:pointer;
   display:block;
 ">
+
       ` : `
         <div style="
           width:120px;
@@ -805,6 +807,7 @@ async function compressImage(file, maxWidth = 800, quality = 0.6) {
 </script>
 </body>
 </html>
+
 
 
 
