@@ -1236,14 +1236,16 @@ function filterByStatus(){
     document.querySelectorAll('.status-row input:checked')
   ).map(cb => cb.value);
 
-  loadHistory(currentKeyword, currentDate);
+  console.log("สถานะที่เลือก:", currentStatuses); // 👈 เพิ่มบรรทัดนี้
 
+  loadHistory(currentKeyword, currentDate);
 }
 
       
 </script>
 </body>
 </html>
+
 
 
 
