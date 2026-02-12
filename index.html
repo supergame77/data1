@@ -281,21 +281,6 @@ window.saveData = async ()=>{
       createdAt: new Date()
     };
 
-    if(editingId){
-      await updateDoc(doc(db,"jobs",editingId), data);
-      editingId=null;
-    }else{
-      await addDoc(collection(db,"jobs"), data);
-    }
-
-    alert("บันทึกสำเร็จ");
-    showTab('history');
-
-  }catch(error){
-    console.error(error);
-    alert("เกิดข้อผิดพลาด ดู Console");
-  }
-};
 
     if(editingId){
       await updateDoc(doc(db,"jobs",editingId), data);
