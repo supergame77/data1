@@ -317,12 +317,15 @@ input[type="date"]{
 
 .status-row{
   display:flex;
-  justify-content:flex-start;  /* 👈 จัดกลาง */
+  justify-content:flex-start;
   align-items:center;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;        /* 👈 ไม่ให้ขึ้นบรรทัดใหม่ */
   gap:12px;
   margin-top:16px;
-  margin-bottom:24px;       /* 👈 เว้นระยะการ์ด */
+  margin-bottom:24px;
+
+  overflow-x:auto;         /* 👈 เลื่อนซ้ายขวาได้ */
+  white-space:nowrap;
 }
 
 .history-status-row{
@@ -1358,6 +1361,7 @@ window.filterByStatus = function(){
 </script>
 </body>
 </html>
+
 
 
 
