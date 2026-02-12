@@ -384,7 +384,13 @@ textarea{min-height:80px;resize:none}
 <div id="dateFullDisplay" style="margin-bottom:12px; font-size:14px; color:#444;"></div>
       
 <input type="date" id="searchDate"
-       style="position:absolute; left:-9999px; opacity:0;">
+       style="
+         position:absolute;
+         opacity:0;
+         width:1px;
+         height:1px;
+         pointer-events:none;
+       ">
       
 <!-- 🔘 ปุ่ม 3 ปุ่ม -->
 <div style="display:flex; gap:8px; margin-bottom:12px;">
@@ -951,10 +957,11 @@ const openDateBtn = document.getElementById("openDateBtn");
 
 if (openDateBtn && searchDate) {
   openDateBtn.addEventListener("click", () => {
-    searchDate.focus();
-    setTimeout(() => {
-      searchDate.click();
-    }, 50);
+    if (searchDate.showPicker) {
+      searchDate.showPicker();
+    } else {
+      searchDate.focus();
+    }
   });
 }
       
@@ -980,15 +987,8 @@ if (searchInput) {
     loadHistory(currentKeyword, currentDate);
   });
 }
+  
 
-if (searchDate) {
-  searchDate.addEventListener("change", () => {
-    currentKeyword = searchInput.value;
-    currentDate = searchDate.value;
-
-    loadHistory(currentKeyword, currentDate);
-  });
-}
   
   let scale = 1;
   
@@ -1119,6 +1119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
