@@ -25,7 +25,22 @@
 
 <style>
 
+.search-date{
+  width:100%;
+  height:48px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  margin-bottom:12px;
+  font-size:15px;
+  box-sizing:border-box;
+  background:#fff;
+}
 
+.search-date::-webkit-calendar-picker-indicator{
+  opacity:1;
+  cursor:pointer;
+}      
 
       
 .date-input{
@@ -321,19 +336,7 @@ textarea{min-height:80px;resize:none}
 >
 
 <!-- 📅 ช่องวันที่ (แสดงอย่างเดียว) -->
-<input 
-  type="date"
-  id="searchDate"
-  style="
-    width:100%;
-    height:48px;
-    padding:0 14px;
-    border-radius:12px;
-    border:1px solid #ddd;
-    margin-bottom:10px;
-    font-size:15px;
-  "
->
+<input type="date" id="searchDate" class="search-date">
 
 <!-- 🔘 ปุ่ม 3 ปุ่ม -->
 <div style="display:flex; gap:8px; margin-bottom:12px;">
@@ -1087,6 +1090,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
