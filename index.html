@@ -390,54 +390,57 @@ window.saveData = async ()=>{
     const billFile = billImage.files[0];
 
     if(carFile){
-  const compressedCar = await compressImage(carFile);
-  carURL = await uploadImage(compressedCar, "cars");
-}
+      const compressedCar = await compressImage(carFile);
+      carURL = await uploadImage(compressedCar, "cars");
+    }
+
     if(billFile){
-  const compressedBill = await compressImage(billFile);
-  billURL = await uploadImage(compressedBill, "bills");
-}
+      const compressedBill = await compressImage(billFile);
+      billURL = await uploadImage(compressedBill, "bills");
+    }
 
-const data = {
-  name: name.value,
-  date: date.value,
-  plate: plate.value,
-  phone: phone.value,
-  brand: brand.value,
-  model: model.value,
-  year: year.value,
-  beforedetail: beforeDetail.value,
-  afterdetail: afterDetail.value,
-  price: parseFloat(price.value) || 0,
-  carimage: carURL,
-  billimage: billURL,
-  
-};
+    const data = {
+      name: name.value,
+      date: date.value,
+      plate: plate.value,
+      phone: phone.value,
+      brand: brand.value,
+      model: model.value,
+      year: year.value,
+      beforedetail: beforeDetail.value,
+      afterdetail: afterDetail.value,
+      price: parseFloat(price.value) || 0,
+      carimage: carURL,
+      billimage: billURL,
+    };
 
-let result;
+    let result;
 
-if(editingId){
-  result = await supabase
-    .from("jobs")
-    .update(data)
-    .eq("id", editingId);
-}else{
-  result = await supabase
-    .from("jobs")
-    .insert([data]);
-}
+    if(editingId){
+      result = await supabase
+        .from("jobs")
+        .update(data)
+        .eq("id", editingId);
+    }else{
+      result = await supabase
+        .from("jobs")
+        .insert([data]);
+    }
 
-if(result.error){
-  alert("บันทึกไม่สำเร็จ");
-  console.error(result.error);
-  return;
-}
+    if(result.error){
+      alert("บันทึกไม่สำเร็จ");
+      console.error(result.error);
+      return;
+    }
 
-alert("บันทึกสำเร็จ");
-resetForm();
-showTab('history');
+    alert("บันทึกสำเร็จ");
+    resetForm();
+    showTab('history');
 
-}
+  } catch(error){
+    console.error(error);
+    alert("เกิดข้อผิดพลาด");
+  }
 };
 
 window.loadHistory = async (keyword = "") => {
@@ -913,6 +916,7 @@ window.filterByDate = async function(){
 </script>
 </body>
 </html>
+
 
 
 
