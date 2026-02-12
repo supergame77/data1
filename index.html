@@ -443,7 +443,14 @@ total += itemPrice;
   ${itemPrice.toLocaleString()} บาท
 </div>
 
-           ${i.billimage ? `
+<div style="
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+">
+
+  ${i.billimage ? `
     <button onclick="openImage('${i.billimage}')"
     style="
       background:#2e7d32;
@@ -460,18 +467,6 @@ total += itemPrice;
     </button>
   ` : ''}
 
-        </div>
-      </div>
-
-<div style="
-  margin-top:12px;
-  display:flex;
-  gap:10px;
-  justify-content:flex-end;
-">
-
-
-
   <button onclick="editData('${i.id}')"
   style="
     width:40px;
@@ -485,11 +480,10 @@ total += itemPrice;
     justify-content:center;
     font-size:16px;
   ">
-  
-  <i class="bi bi-pencil"></i>
-</button>
+    <i class="bi bi-pencil"></i>
+  </button>
 
- <button onclick="deleteData('${i.id}')"
+  <button onclick="deleteData('${i.id}')"
   style="
     width:40px;
     height:40px;
@@ -502,10 +496,11 @@ total += itemPrice;
     justify-content:center;
     font-size:16px;
   ">
-  <i class="bi bi-trash"></i>
-</button>
+    <i class="bi bi-trash"></i>
+  </button>
 
 </div>
+      </div>
 
     </div>
     `;
@@ -696,6 +691,7 @@ function getDistance(touches){
 </script>
 </body>
 </html>
+
 
 
 
