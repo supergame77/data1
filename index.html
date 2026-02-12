@@ -177,7 +177,6 @@ textarea{min-height:80px;resize:none}
 ">
   <i class="bi bi-cash-stack"></i> ยอดรวมทั้งหมด: 0 บาท
 </div>
-</div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
@@ -507,13 +506,14 @@ const searchInput = document.getElementById("searchInput");
 
 searchInput.addEventListener("input", (e) => {
   loadHistory(e.target.value);
-});  
+});
 </script>
 <div id="imageModal" class="modal-overlay">
   <img id="modalImg" class="modal-img">
 </div>  
 </body>
 </html>
+
 
 
 
