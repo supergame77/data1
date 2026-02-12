@@ -389,14 +389,7 @@ textarea{min-height:80px;resize:none}
 <!-- 📅 ช่องวันที่ (แสดงอย่างเดียว) -->
 <div id="dateFullDisplay" style="margin-bottom:12px; font-size:14px; color:#444;"></div>
       
-<input type="date" id="searchDate"
-       style="
-         position:absolute;
-         opacity:0;
-         width:1px;
-         height:1px;
-         pointer-events:none;
-       ">
+
       
 <!-- 🔘 ปุ่ม 3 ปุ่ม -->
 <div style="display:flex; gap:8px; margin-bottom:12px;">
@@ -958,6 +951,14 @@ const searchDate = document.getElementById("searchDate");
 const searchDateBtn = document.getElementById("searchDateBtn");
 const openDateBtn = document.getElementById("openDateBtn");
 
+if (searchDate) {
+  searchDate.addEventListener("change", () => {
+    currentKeyword = searchInput.value;
+    currentDate = searchDate.value;
+    loadHistory(currentKeyword, currentDate);
+  });
+}      
+
 if (openDateBtn && searchDate) {
   openDateBtn.addEventListener("click", () => {
     if (searchDate.showPicker) {
@@ -1122,6 +1123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
