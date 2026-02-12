@@ -278,7 +278,44 @@ input[type="date"]{
   padding:0 12px;
   font-size:16px;
   line-height:44px;
-}    
+} 
+
+.status-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.status-btn{
+  flex:1 1 calc(50% - 4px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:44px;
+  border-radius:14px;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  color:#fff;
+  position:relative;
+}
+
+.status-btn input{
+  display:none;
+}
+
+/* สี */
+.status-btn.working{ background:#ff9800; }
+.status-btn.done{ background:#2196f3; }
+.status-btn.unpaid{ background:#f44336; }
+.status-btn.paid{ background:#2e7d32; }
+
+/* ตอนยังไม่ติ๊กให้จาง */
+.status-btn input:not(:checked) + *{
+  opacity:.5;
+}
+      
 </style>
 </head>
 <body>
@@ -447,6 +484,31 @@ input[type="date"]{
   </button>
 
 </div>
+
+<!-- 👇 วางตรงนี้ -->
+<div class="status-row">
+
+  <label class="status-btn working">
+    <input type="checkbox" value="กำลังซ่อม" onchange="filterByStatus()">
+    กำลังซ่อม
+  </label>
+
+  <label class="status-btn done">
+    <input type="checkbox" value="เสร็จแล้ว" onchange="filterByStatus()">
+    เสร็จแล้ว
+  </label>
+
+  <label class="status-btn unpaid">
+    <input type="checkbox" value="ยังไม่จ่าย" onchange="filterByStatus()">
+    ยังไม่จ่าย
+  </label>
+
+  <label class="status-btn paid">
+    <input type="checkbox" value="จ่ายแล้ว" onchange="filterByStatus()">
+    จ่ายแล้ว
+  </label>
+
+</div>      
 
 
   <!-- 📋 รายการ -->
@@ -655,6 +717,12 @@ if (error) {
 
 data?.forEach(i => {
 
+  // ✅ กรองสถานะ
+  if(currentStatuses.length > 0 && 
+     !currentStatuses.includes(i.status)){
+    return;
+  }
+
   const itemPrice = parseFloat(i.price) || 0;
   total += itemPrice;
 
@@ -769,7 +837,7 @@ style="
   font-weight:600;
   white-space:nowrap;
 ">
-  ${i.status === "เสร็จ" ? "เสร็จแล้ว" : i.status}
+  ${i.status}
 </span>
 
   </div>
@@ -1007,6 +1075,7 @@ if (openDateBtn && searchDate) {
       
 let currentKeyword = "";
 let currentDate = "";
+let currentStatuses = [];
 
 if (searchDateBtn) {
   searchDateBtn.addEventListener("click", () => {
@@ -1139,9 +1208,15 @@ if (clearFilterBtn) {
   clearFilterBtn.addEventListener("click", () => {
     currentKeyword = "";
     currentDate = "";
+    currentStatuses = [];
 
     searchInput.value = "";
     searchDate.value = "";
+
+    // 🔥 เอาติ๊กออกทุกช่อง
+    document
+      .querySelectorAll(".status-row input")
+      .forEach(cb => cb.checked = false);
 
     loadHistory("", "");
   });
@@ -1155,10 +1230,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchDate) searchDate.value = currentDate;
 });
     
+function filterByStatus(){
+
+  currentStatuses = Array.from(
+    document.querySelectorAll('.status-row input:checked')
+  ).map(cb => cb.value);
+
+  loadHistory(currentKeyword, currentDate);
+
+}
+
       
 </script>
 </body>
 </html>
+
 
 
 
