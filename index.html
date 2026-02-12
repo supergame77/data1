@@ -79,6 +79,7 @@ textarea{min-height:80px;resize:none}
   object-fit:contain;
   transition:transform .3s ease;
   transform:scale(.9);
+  touch-action:none;
 }
 
 .modal-overlay.show .modal-img{
@@ -197,6 +198,14 @@ textarea{min-height:80px;resize:none}
 
 </div> <!-- 🔥 ปิด historyTab ตรงนี้ -->
 
+<div id="imageModal" class="modal-overlay">
+  <button class="close-btn" onclick="closeModal(event)">
+    <i class="bi bi-x"></i>
+  </button>
+  <img id="modalImg" class="modal-img">
+</div>
+
+  
 <script type="module">
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
@@ -535,6 +544,9 @@ if (searchInput) {
     loadHistory(e.target.value);
   });
 }
+  
+  let scale = 1;
+  
 window.openImage = function(url){
   const modal = document.getElementById("imageModal");
   const img = document.getElementById("modalImg");
@@ -563,9 +575,9 @@ document.getElementById("imageModal")
     }
 });
 
-let scale = 1;
 
 const modalImg = document.getElementById("modalImg");
+  
 
 modalImg.addEventListener("wheel", (e)=>{
   e.preventDefault();
@@ -574,23 +586,38 @@ modalImg.addEventListener("wheel", (e)=>{
   modalImg.style.transform = `scale(${scale})`;
 });
 
+let initialDistance = 0;
+
+modalImg.addEventListener("touchstart", (e)=>{
+  if(e.touches.length === 2){
+    initialDistance = getDistance(e.touches);
+  }
+});
+
 modalImg.addEventListener("touchmove", (e)=>{
   if(e.touches.length === 2){
-    scale += 0.02;
-    scale = Math.min(Math.max(.8, scale), 4);
+    e.preventDefault();
+
+    const newDistance = getDistance(e.touches);
+    let zoomFactor = newDistance / initialDistance;
+
+    scale *= zoomFactor;
+    scale = Math.min(Math.max(scale, .8), 4);
+    initialDistance = newDistance;
     modalImg.style.transform = `scale(${scale})`;
   }
 });
-  
+
+function getDistance(touches){
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+} 
+
 </script>
-<div id="imageModal" class="modal-overlay">
-  <button class="close-btn" onclick="closeModal(event)">
-    <i class="bi bi-x"></i>
-  </button>
-  <img id="modalImg" class="modal-img">
-</div> 
 </body>
 </html>
+
 
 
 
