@@ -25,6 +25,9 @@
 
 <style>
 
+
+
+      
 .date-input{
   flex:1;
   height:48px;
@@ -34,8 +37,11 @@
   font-size:16px;
   background:#fff;
   box-sizing:border-box;
-}     
-      
+  color:#333;
+}
+.date-input::placeholder{
+  color:#999;
+}
 input[type="date"]{
   min-height:44px;
 }
@@ -45,9 +51,6 @@ input[type="date"]{
   background:#fff;
 }
 
-input[type="date"]:invalid{
-  color:#999;
-}      
 *{font-family:'Kanit',system-ui,sans-serif!important}
 *, *::before, *::after {
   box-sizing: border-box;
@@ -316,7 +319,13 @@ textarea{min-height:80px;resize:none}
   <label style="font-size:13px; color:#666; margin-bottom:4px;">
     เลือกวันที่
   </label>
-  <input type="date" id="searchDate" class="date-input">
+  <input 
+  type="text" 
+  id="searchDate" 
+  class="date-input"
+  placeholder="เลือกวันที่"
+  readonly
+>
 </div>
 
   <button id="searchDateBtn"
@@ -1051,10 +1060,26 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchDate) searchDate.value = currentDate;
 });
 
-  
+
+
+const searchDateInput = document.getElementById("searchDate");
+
+searchDateInput.addEventListener("click", () => {
+  searchDateInput.type = "date";
+  searchDateInput.showPicker?.();
+});
+
+searchDateInput.addEventListener("blur", () => {
+  if (!searchDateInput.value) {
+    searchDateInput.type = "text";
+  }
+});      
+
+      
 </script>
 </body>
 </html>
+
 
 
 
