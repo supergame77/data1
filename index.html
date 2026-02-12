@@ -178,7 +178,13 @@ textarea{min-height:80px;resize:none}
   <i class="bi bi-cash-stack"></i> ยอดรวมทั้งหมด: 0 บาท
 </div>
 
+<!-- 🔥 ต้องมีอันนี้ -->
+<div id="historyList"></div>
+
+</div> <!-- 🔥 ปิด historyTab ตรงนี้ -->
+
 <script type="module">
+
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 // ======= ใส่ค่าของคุณตรงนี้ =======
@@ -513,6 +519,7 @@ searchInput.addEventListener("input", (e) => {
 </div>  
 </body>
 </html>
+
 
 
 
