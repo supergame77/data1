@@ -79,7 +79,8 @@
 input[type="date"]{
   min-height:44px;
 }
-      
+
+
 input[type="date"]{
   color:#333;
   background:#fff;
@@ -91,9 +92,12 @@ input[type="date"]{
 }
 body{margin:0;background:#f5f7fb}
       
-.container{max-width:400px;
-           margin:auto;
-           padding:16px}
+.container{
+  width:100%;
+  max-width:100%;
+  margin:auto;
+  padding:16px;
+}
       
 .tabs{background:#fff;border-radius:14px;display:flex;padding:6px;margin-bottom:16px;position:relative;overflow:hidden}
 .tab{z-index:1;flex:1;text-align:center;padding:10px;border-radius:12px;color:#666;font-size:14px;cursor:pointer}
@@ -258,21 +262,13 @@ textarea{min-height:80px;resize:none}
       
 @media(max-width:480px){
 
-  .container{
-    padding:12px;
-    max-width:100%;
-    width:100%;
+  input[type="date"]{
+    width:100% !important;
+    display:block;
+    box-sizing:border-box;
   }
 
-  .row{
-    flex-direction:column;
-  }
-
-  .card{
-    padding:14px;
-  }
-
-}      
+}     
 </style>
 </head>
 <body>
@@ -1153,6 +1149,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
