@@ -40,24 +40,7 @@
   -webkit-appearance:none;
   appearance:none;
 }
-
-searchDate.addEventListener("change", () => {
-  if (!searchDate.value) {
-    dateFullDisplay.textContent = "";
-    return;
-  }
-
-  const d = new Date(searchDate.value);
-
-  const formatted = d.toLocaleDateString("th-TH", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  });
-
-  dateFullDisplay.textContent = formatted;
-});      
+      
 
 @media (max-width: 480px){
   .search-date{
@@ -404,16 +387,6 @@ textarea{min-height:80px;resize:none}
 <!-- 🔘 ปุ่ม 3 ปุ่ม -->
 <div style="display:flex; gap:8px; margin-bottom:12px;">
 
-  <button id="openDateBtn"
-    style="
-      flex:1;
-      height:48px;
-      background:#ff9800;
-      color:#fff;
-      border:none;
-      border-radius:12px;
-      font-weight:600;
-    ">
         
     <button id="openDateBtn" class="filter-btn btn-date">
   <i class="bi bi-calendar-event"></i>
@@ -1140,6 +1113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
