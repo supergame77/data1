@@ -223,6 +223,21 @@ textarea{min-height:80px;resize:none}
   style="width:100%;padding:10px;border-radius:12px;border:1px solid #ddd;margin-bottom:12px;"
 >
 
+<div style="display:flex; gap:8px; margin-bottom:12px;">
+  <input 
+    type="date" 
+    id="dateFilter"
+    style="flex:1;padding:10px;border-radius:12px;border:1px solid #ddd;"
+  >
+  <button 
+    onclick="filterByDate()"
+    style="padding:10px 14px;border:none;border-radius:12px;background:#e53935;color:#fff;"
+  >
+    ค้นหาวันที่
+  </button>
+</div>
+
+      
 <div id="totalBox" style="
   background:#fff;
   padding:12px;
@@ -384,22 +399,33 @@ const data = {
   price: parseFloat(price.value) || 0,
   carimage: carURL,
   billimage: billURL,
-  createdat: new Date().toISOString()
+  
 };
 
-    if(editingId){
-      await supabase.from("jobs").update(data).eq("id", editingId);
-      editingId=null;
-    }else{
-      await supabase.from("jobs").insert([data]);
-    }
+let result;
 
-    alert("บันทึกสำเร็จ");
-    showTab('history');
+if(editingId){
+  result = await supabase
+    .from("jobs")
+    .update(data)
+    .eq("id", editingId);
+}else{
+  result = await supabase
+    .from("jobs")
+    .insert([data]);
+}
 
-  }catch(error){
-    console.error(error);
-  }
+if(result.error){
+  alert("บันทึกไม่สำเร็จ");
+  console.error(result.error);
+  return;
+}
+
+alert("บันทึกสำเร็จ");
+resetForm();
+showTab('history');
+
+}
 };
 
 window.loadHistory = async (keyword = "") => {
@@ -827,10 +853,55 @@ async function compressImage(file, maxWidth = 800, quality = 0.6) {
   });
 }
 
+window.filterByDate = async function(){
+
+  const selectedDate = document.getElementById("dateFilter").value;
+
+  if(!selectedDate){
+    alert("กรุณาเลือกวันที่");
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*")
+    .eq("date", selectedDate)   // 🔥 ใช้ column date ของคุณ
+    .order("createdat", { ascending: false });
+
+  if(error){
+    console.error(error);
+    alert("โหลดข้อมูลไม่สำเร็จ");
+    return;
+  }
+
+  let html = "";
+  let total = 0;
+
+  data?.forEach(i => {
+    const itemPrice = parseFloat(i.price) || 0;
+    total += itemPrice;
+
+    html += `
+      <div style="background:#fff;padding:16px;margin-bottom:14px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,.06);">
+        <b>${i.name}</b><br>
+        ${i.plate} <br>
+        ${i.brand} ${i.model} <br>
+        ${new Date(i.date).toLocaleDateString("th-TH")} <br>
+        <b style="color:#e53935">${itemPrice.toLocaleString()} บาท</b>
+      </div>
+    `;
+  });
+
+  historyList.innerHTML = html || "ไม่มีข้อมูลของวันที่นี้";
+
+  document.getElementById("totalBox").innerHTML =
+    `<i class="bi bi-cash-stack"></i> ยอดรวมทั้งหมด: ${total.toLocaleString()} บาท`;
+}
   
 </script>
 </body>
 </html>
+
 
 
 
