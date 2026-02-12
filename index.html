@@ -137,18 +137,20 @@ textarea{min-height:80px;resize:none}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyCmj37F4VLFX_SkNWwPFR2xODdU7D77eKg",
 authDomain: "garage-system-c15b6.firebaseapp.com",
 projectId: "garage-system-c15b6",
-storageBucket: "garage-system-c15b6.firebasestorage.app",
+storageBucket: "garage-system-c15b6.appspot.com",
 messagingSenderId: "1021919346596",
 appId: "1:1021919346596:web:ad5915eac27ff5535c8b31"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const name = document.getElementById("name");
 const date = document.getElementById("date");
@@ -174,56 +176,46 @@ const tabHistory = document.getElementById("tabHistory");
 const tabIndicator = document.getElementById("tabIndicator");
 
 let editingId = null;
-let carBase64 = "";
-let billBase64 = "";
+let carURL = "";
+let billURL = "";
 
-const carData = {
-  Toyota:["Revo","Vios","Fortuner","Yaris"],
-  Isuzu:["D-Max","MU-X"],
-  Honda:["Civic","City","CR-V"],
-  Mitsubishi:["Triton","Pajero"],
-  Nissan:["Navara","Almera"]
-};
-
-brand.innerHTML = '<option value="">เลือกยี่ห้อ</option>';
-Object.keys(carData).forEach(b=>{
-  brand.innerHTML += `<option value="${b}">${b}</option>`;
-});
-
-brand.onchange = ()=>{
-  const models = carData[brand.value] || [];
-  model.innerHTML = '<option value="">เลือกรุ่น</option>';
-  models.forEach(m=>{
-    model.innerHTML += `<option value="${m}">${m}</option>`;
-  });
-};
-
-function readImage(input, callback){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => callback(e.target.result);
-  reader.readAsDataURL(file);
+async function uploadImage(file, folder){
+  if(!file) return "";
+  const storageRef = ref(storage, `${folder}/${Date.now()}_${file.name}`);
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
 }
 
-carImage.onchange = ()=> readImage(carImage,(src)=>{ carBase64=src; carPreview.src=src; removeCar.style.display='flex'; });
-billImage.onchange = ()=> readImage(billImage,(src)=>{ billBase64=src; billPreview.src=src; removeBill.style.display='flex'; });
+carImage.onchange = ()=>{
+  const file = carImage.files[0];
+  if(!file) return;
+  carPreview.src = URL.createObjectURL(file);
+  removeCar.style.display='flex';
+};
+
+billImage.onchange = ()=>{
+  const file = billImage.files[0];
+  if(!file) return;
+  billPreview.src = URL.createObjectURL(file);
+  removeBill.style.display='flex';
+};
 
 removeCar.onclick = ()=>{
-  carBase64="";
-  carPreview.src="";
   carImage.value="";
+  carPreview.src="";
   removeCar.style.display='none';
+  carURL="";
 };
 
 removeBill.onclick = ()=>{
-  billBase64="";
-  billPreview.src="";
   billImage.value="";
+  billPreview.src="";
   removeBill.style.display='none';
+  billURL="";
 };
 
 window.resetForm = function(){
+  document.querySelector("form")?.reset();
   name.value="";
   date.value="";
   plate.value="";
@@ -234,8 +226,6 @@ window.resetForm = function(){
   beforeDetail.value="";
   afterDetail.value="";
   price.value="";
-  carBase64="";
-  billBase64="";
   carPreview.src="";
   billPreview.src="";
   removeCar.style.display='none';
@@ -245,6 +235,17 @@ window.resetForm = function(){
 
 window.saveData = async ()=>{
   try{
+    if(!name.value){
+      alert("กรุณากรอกชื่อลูกค้า");
+      return;
+    }
+
+    const carFile = carImage.files[0];
+    const billFile = billImage.files[0];
+
+    if(carFile) carURL = await uploadImage(carFile,"cars");
+    if(billFile) billURL = await uploadImage(billFile,"bills");
+
     const data = {
       name: name.value || "",
       date: date.value || "",
@@ -256,19 +257,14 @@ window.saveData = async ()=>{
       beforeDetail: beforeDetail.value || "",
       afterDetail: afterDetail.value || "",
       price: price.value || "0",
-      carImage: carBase64,
-      billImage: billBase64,
+      carImage: carURL,
+      billImage: billURL,
       createdAt: new Date()
     };
 
-    if(!data.name){
-      alert("กรุณากรอกชื่อลูกค้า");
-      return;
-    }
-
     if(editingId){
       await updateDoc(doc(db,"jobs",editingId), data);
-      editingId = null;
+      editingId=null;
     }else{
       await addDoc(collection(db,"jobs"), data);
     }
@@ -292,6 +288,8 @@ window.loadHistory = async ()=>{
     🚗 ${i.brand || ''} ${i.model || ''}<br>
     🏷 ${i.plate || '-'}<br>
     💰 ${i.price || 0} บาท<br>
+    ${i.carImage?`<img src='${i.carImage}' style='width:100%;margin-top:6px;border-radius:8px;'>`:''}
+    ${i.billImage?`<button onclick="window.open('${i.billImage}','_blank')">ดูบิล</button>`:''}
     <button onclick="editData('${d.id}')">แก้ไข</button>
     <button onclick="deleteData('${d.id}')">ลบ</button>
     </div>`;
@@ -322,8 +320,8 @@ window.editData = async (id)=>{
   price.value=i.price||"";
   carPreview.src=i.carImage||"";
   billPreview.src=i.billImage||"";
-  carBase64=i.carImage||"";
-  billBase64=i.billImage||"";
+  carURL=i.carImage||"";
+  billURL=i.billImage||"";
   editingId=id;
   showTab('form');
 };
