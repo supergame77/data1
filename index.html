@@ -278,10 +278,12 @@ textarea{min-height:80px;resize:none}
 <script>
 
 // ======= ใส่ค่าของคุณตรงนี้ =======
-const supabase = window.supabase.createClient(
-  "https://qasuckitplvdnghjvajy.supabase.co",
-  "sb_publishable_KZ4eAHfXbNcFvL-Dbn2UuQ_v-NdJriJ"
-);
+if (!window.supabase) {
+  window.supabase = window.supabase.createClient(
+    "https://qasuckitplvdnghjvajy.supabase.co",
+    "sb_publishable_KZ4eAHfXbNcFvL-Dbn2UuQ_v-NdJriJ"
+  );
+}
 
 // ==================================
 
@@ -917,6 +919,7 @@ console.log("NEW VERSION LOADED");
 </script>
 </body>
 </html>
+
 
 
 
