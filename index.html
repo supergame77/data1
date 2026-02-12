@@ -348,6 +348,8 @@ window.resetForm = function(){
   removeCar.style.display='none';
   removeBill.style.display='none';
   editingId=null;
+  carURL = "";
+  billURL = "";
 };
 
 window.saveData = async ()=>{
@@ -379,7 +381,7 @@ const data = {
   year: year.value,
   beforedetail: beforeDetail.value,
   afterdetail: afterDetail.value,
-  price: price.value,
+  price: parseFloat(price.value) || 0,
   carimage: carURL,
   billimage: billURL,
   createdat: new Date().toISOString()
@@ -595,6 +597,8 @@ window.toggleBill = function(id){
 window.editData = async (id)=>{
   const { data } = await supabase.from("jobs").select("*").eq("id", id).single();
   if(!data) return;
+  if (data.carimage) removeCar.style.display = "flex";
+  if (data.billimage) removeBill.style.display = "flex";
 
   name.value=data.name||"";
   date.value=data.date||"";
@@ -827,6 +831,7 @@ async function compressImage(file, maxWidth = 800, quality = 0.6) {
 </script>
 </body>
 </html>
+
 
 
 
