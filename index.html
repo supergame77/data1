@@ -132,7 +132,6 @@ appId: "1:1021919346596:web:ad5915eac27ff5535c8b31"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ===== DOM Elements ===== */
 const name = document.getElementById("name");
 const date = document.getElementById("date");
 const plate = document.getElementById("plate");
@@ -154,7 +153,10 @@ const tabForm = document.getElementById("tabForm");
 const tabHistory = document.getElementById("tabHistory");
 const tabIndicator = document.getElementById("tabIndicator");
 
-/* ===== รุ่นรถตามยี่ห้อ ===== */
+let editingId = null;
+let carBase64 = "";
+let billBase64 = "";
+
 const carData = {
   Toyota:["Revo","Vios","Fortuner","Yaris"],
   Isuzu:["D-Max","MU-X"],
@@ -163,39 +165,31 @@ const carData = {
   Nissan:["Navara","Almera"]
 };
 
-const brandSelect = document.getElementById("brand");
-const modelSelect = document.getElementById("model");
-
-brandSelect.innerHTML = '<option value="">เลือกยี่ห้อ</option>';
+brand.innerHTML = '<option value="">เลือกยี่ห้อ</option>';
 Object.keys(carData).forEach(b=>{
-  brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
+  brand.innerHTML += `<option value="${b}">${b}</option>`;
 });
 
-brandSelect.onchange = ()=>{
-  const models = carData[brandSelect.value] || [];
-  modelSelect.innerHTML = '<option value="">เลือกรุ่น</option>';
+brand.onchange = ()=>{
+  const models = carData[brand.value] || [];
+  model.innerHTML = '<option value="">เลือกรุ่น</option>';
   models.forEach(m=>{
-    modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
+    model.innerHTML += `<option value="${m}">${m}</option>`;
   });
 };
 
-/* ===== Firebase Logic ===== */
-let editingId=null;
-let carBase64="";
-let billBase64="";
-
-function readImage(input,previewSetter){
-const file=input.files[0];
-if(!file) return;
-const reader=new FileReader();
-reader.onload=e=>previewSetter(e.target.result);
-reader.readAsDataURL(file);
+function readImage(input, callback){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => callback(e.target.result);
+  reader.readAsDataURL(file);
 }
 
-carImage.onchange=()=>readImage(carImage,(src)=>{carBase64=src;carPreview.src=src;});
-billImage.onchange=()=>readImage(billImage,(src)=>{billBase64=src;billPreview.src=src;});
+carImage.onchange = ()=> readImage(carImage,(src)=>{ carBase64=src; carPreview.src=src; });
+billImage.onchange = ()=> readImage(billImage,(src)=>{ billBase64=src; billPreview.src=src; });
 
-window.saveData = async function(){
+window.saveData = async ()=>{
   try{
     const data = {
       name: name.value || "",
@@ -208,8 +202,8 @@ window.saveData = async function(){
       beforeDetail: beforeDetail.value || "",
       afterDetail: afterDetail.value || "",
       price: price.value || "0",
-      carImage: carBase64 || "",
-      billImage: billBase64 || "",
+      carImage: carBase64,
+      billImage: billBase64,
       createdAt: new Date()
     };
 
@@ -228,71 +222,71 @@ window.saveData = async function(){
     alert("บันทึกสำเร็จ");
     showTab('history');
 
-  }catch(err){
-    console.error(err);
-    alert("เกิดข้อผิดพลาด ดูใน Console");
+  }catch(error){
+    console.error(error);
+    alert("เกิดข้อผิดพลาด ดู Console");
   }
 };
 
-window.loadHistory=async function(){
-const snap=await getDocs(collection(db,"jobs"));
-let html="";
-snap.forEach(d=>{
-const i=d.data();
-html+=`<div style='background:#fff;padding:12px;margin-bottom:10px;border-radius:12px;'>
-<b>${i.name||'-'}</b><br>
-🚗 ${i.brand||''} ${i.model||''}<br>
-🏷 ${i.plate||'-'}<br>
-💰 ${i.price||0} บาท<br>
-<button onclick="editData('${d.id}')">แก้ไข</button>
-<button onclick="deleteData('${d.id}')">ลบ</button>
-</div>`;
-});
-historyList.innerHTML=html||"ยังไม่มีข้อมูล";
-}
+window.loadHistory = async ()=>{
+  const snap = await getDocs(collection(db,"jobs"));
+  let html = "";
+  snap.forEach(d=>{
+    const i = d.data();
+    html += `<div style='background:#fff;padding:12px;margin-bottom:10px;border-radius:12px;'>
+    <b>${i.name || '-'}</b><br>
+    🚗 ${i.brand || ''} ${i.model || ''}<br>
+    🏷 ${i.plate || '-'}<br>
+    💰 ${i.price || 0} บาท<br>
+    <button onclick="editData('${d.id}')">แก้ไข</button>
+    <button onclick="deleteData('${d.id}')">ลบ</button>
+    </div>`;
+  });
+  historyList.innerHTML = html || "ยังไม่มีข้อมูล";
+};
 
-window.deleteData=async function(id){
-if(!confirm("ยืนยันลบ?"))return;
-await deleteDoc(doc(db,"jobs",id));
-loadHistory();
-}
+window.deleteData = async (id)=>{
+  if(!confirm("ยืนยันลบ?")) return;
+  await deleteDoc(doc(db,"jobs",id));
+  loadHistory();
+};
 
-window.editData=async function(id){
-const snap=await getDoc(doc(db,"jobs",id));
-if(!snap.exists())return;
-const i=snap.data();
-name.value=i.name||"";
-date.value=i.date||"";
-plate.value=i.plate||"";
-phone.value=i.phone||"";
-brand.value=i.brand||"";
-brandSelect.dispatchEvent(new Event('change'));
-model.value=i.model||"";
-year.value=i.year||"";
-beforeDetail.value=i.beforeDetail||"";
-afterDetail.value=i.afterDetail||"";
-price.value=i.price||"";
-carPreview.src=i.carImage||"";
-billPreview.src=i.billImage||"";
-carBase64=i.carImage||"";
-billBase64=i.billImage||"";
-editingId=id;
-showTab('form');
-}
+window.editData = async (id)=>{
+  const snap = await getDoc(doc(db,"jobs",id));
+  if(!snap.exists()) return;
+  const i = snap.data();
+  name.value=i.name||"";
+  date.value=i.date||"";
+  plate.value=i.plate||"";
+  phone.value=i.phone||"";
+  brand.value=i.brand||"";
+  brand.dispatchEvent(new Event('change'));
+  model.value=i.model||"";
+  year.value=i.year||"";
+  beforeDetail.value=i.beforeDetail||"";
+  afterDetail.value=i.afterDetail||"";
+  price.value=i.price||"";
+  carPreview.src=i.carImage||"";
+  billPreview.src=i.billImage||"";
+  carBase64=i.carImage||"";
+  billBase64=i.billImage||"";
+  editingId=id;
+  showTab('form');
+};
 
 function showTab(tab){
-formTab.style.display=tab==='form'?'block':'none';
-historyTab.style.display=tab==='history'?'block':'none';
-tabForm.classList.remove('active');
-tabHistory.classList.remove('active');
-if(tab==='form'){
-tabForm.classList.add('active');
-tabIndicator.style.transform='translateX(0%)';
-}else{
-tabHistory.classList.add('active');
-tabIndicator.style.transform='translateX(100%)';
-loadHistory();
-}
+  formTab.style.display = tab==='form'?'block':'none';
+  historyTab.style.display = tab==='history'?'block':'none';
+  tabForm.classList.remove('active');
+  tabHistory.classList.remove('active');
+  if(tab==='form'){
+    tabForm.classList.add('active');
+    tabIndicator.style.transform='translateX(0%)';
+  }else{
+    tabHistory.classList.add('active');
+    tabIndicator.style.transform='translateX(100%)';
+    loadHistory();
+  }
 }
 
 tabForm.onclick=()=>showTab('form');
