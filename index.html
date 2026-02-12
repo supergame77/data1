@@ -43,7 +43,7 @@ textarea{min-height:80px;resize:none}
 .modal-overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.7);
+  background:rgba(0,0,0,.85);
   display:flex;
   justify-content:center;
   align-items:center;
@@ -51,6 +51,7 @@ textarea{min-height:80px;resize:none}
   pointer-events:none;
   transition:opacity .3s ease;
   z-index:999;
+  padding:20px;
 }
 
 .modal-overlay.show{
@@ -58,18 +59,31 @@ textarea{min-height:80px;resize:none}
   pointer-events:auto;
 }
 
+.close-btn{
+  position:absolute;
+  top:20px;
+  right:20px;
+  background:#fff;
+  border:none;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  font-size:20px;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}  
+
 .modal-img{
-  width:90%;
-  max-height:90%;
+  max-width:100%;
+  max-height:85vh;
   border-radius:16px;
-  transform:scale(.8);
-  transition:transform .3s ease;
   object-fit:contain;
+  transition:transform .3s ease;
+  transform:scale(.9);
 }
 
 .modal-overlay.show .modal-img{
   transform:scale(1);
-}  
+}
 </style>
 </head>
 <body>
@@ -525,24 +539,59 @@ window.openImage = function(url){
   const modal = document.getElementById("imageModal");
   const img = document.getElementById("modalImg");
 
-  if (!modal || !img) return;
-
   img.src = url;
   modal.classList.add("show");
+  document.body.style.overflow = "hidden";
 };
 
-const modalEl = document.getElementById("imageModal");
-if (modalEl) {
-  modalEl.addEventListener("click", ()=>{
-    modalEl.classList.remove("show");
-  });
-}
+indow.closeModal = function(e){
+  if(e) e.stopPropagation();
+
+  const modal = document.getElementById("imageModal");
+  modal.classList.remove("show");
+  document.body.style.overflow = "auto";
+
+  scale = 1;
+  document.getElementById("modalImg").style.transform = "scale(1)";
+};
+
+// ปิดเมื่อกดพื้นหลัง (แต่ไม่ปิดเมื่อกดรูป)
+document.getElementById("imageModal")
+  .addEventListener("click", function(e){
+    if(e.target.id === "imageModal"){
+      closeModal();
+    }
+});
+
+let scale = 1;
+
+const modalImg = document.getElementById("modalImg");
+
+modalImg.addEventListener("wheel", (e)=>{
+  e.preventDefault();
+  scale += e.deltaY * -0.001;
+  scale = Math.min(Math.max(.8, scale), 4);
+  modalImg.style.transform = `scale(${scale})`;
+});
+
+modalImg.addEventListener("touchmove", (e)=>{
+  if(e.touches.length === 2){
+    scale += 0.02;
+    scale = Math.min(Math.max(.8, scale), 4);
+    modalImg.style.transform = `scale(${scale})`;
+  }
+});
+  
 </script>
 <div id="imageModal" class="modal-overlay">
+  <button class="close-btn" onclick="closeModal(event)">
+    <i class="bi bi-x"></i>
+  </button>
   <img id="modalImg" class="modal-img">
-</div>  
+</div> 
 </body>
 </html>
+
 
 
 
