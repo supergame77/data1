@@ -235,6 +235,12 @@ window.resetForm = function(){
 
 window.saveData = async ()=>{
   try{
+    // ป้องกันกรณีมีค่า base64 ค้างจากเวอร์ชันเก่า
+    if(!editingId){
+      carURL = "";
+      billURL = "";
+    }
+  try{
     if(!name.value){
       alert("กรุณากรอกชื่อลูกค้า");
       return;
