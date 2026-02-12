@@ -318,14 +318,30 @@ textarea{min-height:80px;resize:none}
   <div style="flex:1; display:flex; flex-direction:column;">
   <label style="font-size:13px; color:#666; margin-bottom:4px;">
     เลือกวันที่
-  </label>
+<div style="position:relative; flex:1;">
+  
+  <!-- ช่องแสดงผล -->
   <input 
-  type="text" 
-  id="searchDate" 
-  class="date-input"
-  placeholder="เลือกวันที่"
-  readonly
->
+    type="text" 
+    id="searchDateDisplay"
+    class="date-input"
+    placeholder="เลือกวันที่"
+    readonly
+  >
+
+  <!-- date จริง -->
+  <input 
+    type="date"
+    id="searchDate"
+    style="
+      position:absolute;
+      inset:0;
+      opacity:0;
+      width:100%;
+      height:100%;
+    "
+  >
+
 </div>
 
   <button id="searchDateBtn"
@@ -1059,26 +1075,24 @@ document.addEventListener("DOMContentLoaded", () => {
   if (searchInput) searchInput.value = currentKeyword;
   if (searchDate) searchDate.value = currentDate;
 });
+    
 
+const realDate = document.getElementById("searchDate");
+const displayDate = document.getElementById("searchDateDisplay");
 
-
-const searchDateInput = document.getElementById("searchDate");
-
-searchDateInput.addEventListener("click", () => {
-  searchDateInput.type = "date";
-  searchDateInput.showPicker?.();
-});
-
-searchDateInput.addEventListener("blur", () => {
-  if (!searchDateInput.value) {
-    searchDateInput.type = "text";
+realDate.addEventListener("change", () => {
+  if(realDate.value){
+    displayDate.value = realDate.value;
+  } else {
+    displayDate.value = "";
   }
-});      
-
+});
+      
       
 </script>
 </body>
 </html>
+
 
 
 
