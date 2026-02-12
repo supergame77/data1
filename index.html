@@ -94,7 +94,10 @@ textarea{min-height:80px;resize:none}
 #historyList{
   display:flex;
   flex-direction:column;
-  gap:14px;
+}
+
+#historyList > div{
+  width:100%;
 }
   
 </style>
@@ -388,25 +391,24 @@ if (error) {
   let html = "";
   let total = 0;
 
-  data?.forEach(i => {
+data?.forEach(i => {
 
-    const itemPrice = parseFloat(i.price) || 0;
-total += itemPrice;
+  const itemPrice = parseFloat(i.price) || 0;
+  total += itemPrice;
 
-    html += `
-<div style="
-  position:relative;
-  background:#fff;
-  padding:14px;
-  margin-bottom:14px;
-  border-radius:18px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-">
+  html += `
+  <div style="
+    background:#fff;
+    padding:14px;
+    margin-bottom:14px;
+    border-radius:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+  ">
 
-      <div style="display:flex; gap:14px;">
+    <div style="display:flex; gap:14px;">
 
-        ${i.carimage ? `
-          <img src="${i.carimage}"
+      ${i.carimage ? `
+        <img src="${i.carimage}"
           onclick="openImage('${i.carimage}')"
           style="
             width:110px;
@@ -415,105 +417,104 @@ total += itemPrice;
             border-radius:14px;
             cursor:pointer;
           ">
-        ` : `
+      ` : `
+        <div style="
+          width:110px;
+          aspect-ratio:1/1;
+          background:#eee;
+          border-radius:14px;
+        "></div>
+      `}
+
+      <div style="flex:1;font-size:14px;line-height:1.6">
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <b style="font-size:16px">${i.name || '-'}</b>
+
           <div style="
-            width:110px;
-            aspect-ratio:1/1;
-            background:#eee;
-            border-radius:14px;
-          "></div>
-        `}
+            background:#fdecea;
+            color:#e53935;
+            padding:6px 12px;
+            border-radius:999px;
+            font-weight:600;
+            font-size:13px;
+          ">
+            <i class="bi bi-cash-coin"></i>
+            ${itemPrice.toLocaleString()} บาท
+          </div>
+        </div>
 
-        <div style="flex:1;font-size:14px;line-height:1.6">
+        <i class="bi bi-telephone"></i> ${i.phone || '-'}<br>
+        <i class="bi bi-credit-card-2-front"></i> ${i.plate || '-'}<br>
+        <i class="bi bi-car-front"></i> ${i.brand || ''} ${i.model || ''}<br>
+        <i class="bi bi-calendar-event"></i> ${
+          i.date ? new Date(i.date).toLocaleDateString("th-TH") : '-'
+        }
 
-          <b style="font-size:16px">${i.name || '-'}</b><br>
+        <div style="
+          margin-top:10px;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+        ">
 
-          <i class="bi bi-telephone"></i> ${i.phone || '-'}<br>
-          <i class="bi bi-credit-card-2-front"></i> ${i.plate || '-'}<br>
-          <i class="bi bi-car-front"></i> ${i.brand || ''} ${i.model || ''}<br>
-          <i class="bi bi-calendar-event"></i> ${
-            i.date ? new Date(i.date).toLocaleDateString("th-TH") : '-'
-          }<br>
-<div style="
-  position:absolute;
-  top:12px;
-  right:14px;
-  background:#fdecea;
-  color:#e53935;
-  padding:6px 12px;
-  border-radius:999px;
-  font-weight:600;
-  font-size:13px;
-">
-  <i class="bi bi-cash-coin"></i>
-  ${itemPrice.toLocaleString()} บาท
-</div>
+          ${i.billimage ? `
+            <button onclick="openImage('${i.billimage}')"
+              style="
+                background:#2e7d32;
+                color:#fff;
+                border:none;
+                padding:8px 14px;
+                border-radius:12px;
+                font-size:13px;
+                display:flex;
+                align-items:center;
+                gap:6px;
+              ">
+              <i class="bi bi-receipt"></i> ดูบิล
+            </button>
+          ` : '<div></div>'}
 
-<div style="
-  margin-top:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-">
+          <div style="display:flex; gap:10px;">
+            <button onclick="editData('${i.id}')"
+              style="
+                width:40px;
+                height:40px;
+                background:#2196f3;
+                color:#fff;
+                border:none;
+                border-radius:14px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:16px;
+              ">
+              <i class="bi bi-pencil"></i>
+            </button>
 
-  ${i.billimage ? `
-    <button onclick="openImage('${i.billimage}')"
-    style="
-      background:#2e7d32;
-      color:#fff;
-      border:none;
-      padding:8px 14px;
-      border-radius:12px;
-      font-size:13px;
-      display:flex;
-      align-items:center;
-      gap:6px;
-    ">
-      <i class="bi bi-receipt"></i> ดูบิล
-    </button>
-  ` : '<div></div>'}
+            <button onclick="deleteData('${i.id}')"
+              style="
+                width:40px;
+                height:40px;
+                background:#e53935;
+                color:#fff;
+                border:none;
+                border-radius:14px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:16px;
+              ">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
 
-  <div style="display:flex; gap:10px;">
-
-    <button onclick="editData('${i.id}')"
-    style="
-      width:40px;
-      height:40px;
-      background:#2196f3;
-      color:#fff;
-      border:none;
-      border-radius:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:16px;
-    ">
-      <i class="bi bi-pencil"></i>
-    </button>
-
-    <button onclick="deleteData('${i.id}')"
-    style="
-      width:40px;
-      height:40px;
-      background:#e53935;
-      color:#fff;
-      border:none;
-      border-radius:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:16px;
-    ">
-      <i class="bi bi-trash"></i>
-    </button>
-
- 
+        </div>
       </div>
-     </div>
     </div>
-   </div> 
-    `;
-  });
+  </div>
+  `;
+});
 
   historyList.innerHTML = html || "ยังไม่มีข้อมูล";
 
@@ -700,6 +701,7 @@ function getDistance(touches){
 </script>
 </body>
 </html>
+
 
 
 
