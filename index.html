@@ -334,8 +334,14 @@ window.saveData = async ()=>{
     const carFile = carImage.files[0];
     const billFile = billImage.files[0];
 
-    if(carFile) carURL = await uploadImage(carFile, "cars");
-    if(billFile) billURL = await uploadImage(billFile, "bills");
+    if(carFile){
+  const compressedCar = await compressImage(carFile);
+  carURL = await uploadImage(compressedCar, "cars");
+}
+    if(billFile){
+  const compressedBill = await compressImage(billFile);
+  billURL = await uploadImage(compressedBill, "bills");
+}
 
 const data = {
   name: name.value,
@@ -413,7 +419,11 @@ data?.forEach(i => {
 ">
 
       ${i.carimage ? `
-<img src="${i.carimage}"
+<img src="${i.carimage.replace(
+  '/storage/v1/object/public/',
+  '/storage/v1/render/image/public/'
+)}?width=240&quality=70"
+loading="lazy"
   onclick="openImage('${i.carimage}')"
   style="
     width:120px;
@@ -715,9 +725,45 @@ function getDistance(touches){
   return Math.sqrt(dx * dx + dy * dy);
 } 
 
+async function compressImage(file, maxWidth = 800, quality = 0.6) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e => img.src = e.target.result;
+    reader.readAsDataURL(file);
+
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth) {
+        const scale = maxWidth / width;
+        width = maxWidth;
+        height = height * scale;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        blob => resolve(new File([blob], file.name, { type: "image/jpeg" })),
+        "image/jpeg",
+        quality
+      );
+    };
+  });
+}
+
+  
 </script>
 </body>
 </html>
+
 
 
 
