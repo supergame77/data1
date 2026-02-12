@@ -24,6 +24,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
+.date-input{
+  flex:1;
+  height:48px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  font-size:16px;
+  background:#fff;
+  box-sizing:border-box;
+}     
       
 input[type="date"]{
   min-height:44px;
@@ -299,31 +310,36 @@ textarea{min-height:80px;resize:none}
 
       
 
-<input 
-  type="date"
-  id="searchDate"
-  style="
-    flex:1;
-    height:44px;
-    padding:0 12px;
-    border-radius:12px;
-    border:1px solid #ddd;
-    font-size:16px;
-    box-sizing:border-box;
-  "
->
+<div style="display:flex; gap:8px; margin-bottom:12px;">
+
+  <input type="date" id="searchDate" class="date-input">
 
   <button id="searchDateBtn"
-    style="background:#2196f3;color:#fff;border:none;
-           padding:10px 14px;border-radius:12px;">
+    style="
+      height:48px;
+      background:#2196f3;
+      color:#fff;
+      border:none;
+      padding:0 16px;
+      border-radius:12px;
+      font-weight:600;
+    ">
     ค้นหา
   </button>
 
   <button id="clearFilterBtn"
-    style="background:#9e9e9e;color:#fff;border:none;
-           padding:10px 14px;border-radius:12px;">
+    style="
+      height:48px;
+      background:#9e9e9e;
+      color:#fff;
+      border:none;
+      padding:0 16px;
+      border-radius:12px;
+      font-weight:600;
+    ">
     ล้าง
   </button>
+
 </div>
 
 <div id="totalBox" style="
@@ -1034,6 +1050,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
