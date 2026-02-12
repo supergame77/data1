@@ -195,20 +195,41 @@ carImage.onchange=()=>readImage(carImage,(src)=>{carBase64=src;carPreview.src=sr
 billImage.onchange=()=>readImage(billImage,(src)=>{billBase64=src;billPreview.src=src;});
 
 window.saveData=async function(){
+try{
 const data={
-name:name.value,
-date:date.value,
-plate:plate.value,
-phone:phone.value,
-brand:brand.value,
-model:model.value,
-year:year.value,
-beforeDetail:beforeDetail.value,
-afterDetail:afterDetail.value,
-price:price.value,
-carImage:carBase64,
-billImage:billBase64,
+name:name?.value || "",
+date:date?.value || "",
+plate:plate?.value || "",
+phone:phone?.value || "",
+brand:brand?.value || "",
+model:model?.value || "",
+year:year?.value || "",
+beforeDetail:beforeDetail?.value || "",
+afterDetail:afterDetail?.value || "",
+price:price?.value || "0",
+carImage:carBase64 || "",
+billImage:billBase64 || "",
 createdAt:new Date()
+};
+
+if(!data.name){
+alert("กรุณากรอกชื่อลูกค้า");
+return;
+}
+
+if(editingId){
+await updateDoc(doc(db,"jobs",editingId),data);
+editingId=null;
+}else{
+await addDoc(collection(db,"jobs"),data);
+}
+
+alert("บันทึกสำเร็จ");
+showTab('history');
+}catch(err){
+console.error(err);
+alert("เกิดข้อผิดพลาด ดูใน Console");
+}
 };
 
 if(editingId){
