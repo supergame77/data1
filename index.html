@@ -249,7 +249,7 @@ window.saveData = async ()=>{
     if(carFile) carURL = await uploadImage(carFile, "cars");
     if(billFile) billURL = await uploadImage(billFile, "bills");
 
-    const data = {
+const data = {
   name: name.value,
   date: date.value,
   plate: plate.value,
@@ -284,7 +284,7 @@ window.loadHistory = async ()=>{
   const { data } = await supabase
     .from("jobs")
     .select("*")
-    .order("createdAt", { ascending: false });
+    .order("createdat", { ascending: false });
 
   let html = "";
   data?.forEach(i=>{
@@ -320,13 +320,13 @@ window.editData = async (id)=>{
   brand.dispatchEvent(new Event('change'));
   model.value=data.model||"";
   year.value=data.year||"";
-  beforeDetail.value=data.beforeDetail||"";
-  afterDetail.value=data.afterDetail||"";
+  beforeDetail.value=data.beforedetail||"";
+  afterDetail.value=data.afterdetail||"";
   price.value=data.price||"";
-  carPreview.src=data.carImage||"";
-  billPreview.src=data.billImage||"";
-  carURL=data.carImage||"";
-  billURL=data.billImage||"";
+  carPreview.src=data.carimage||"";
+  billPreview.src=data.billimage||"";
+  carURL=data.carimage||"";
+  billURL=data.billimage||"";
   editingId=id;
   showTab('form');
 };
@@ -377,4 +377,5 @@ loadBrands();
 </script>
 </body>
 </html>
+
 
