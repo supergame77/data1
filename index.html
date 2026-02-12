@@ -342,7 +342,13 @@ window.loadHistory = async (keyword = "") => {
     );
   }
 
-  const { data } = await query;
+  const { data, error } = await query;
+
+if (error) {
+  console.error(error);
+  historyList.innerHTML = "โหลดข้อมูลไม่สำเร็จ";
+  return;
+}
 
   let html = "";
   let total = 0;
@@ -519,22 +525,25 @@ window.openImage = function(url){
   const modal = document.getElementById("imageModal");
   const img = document.getElementById("modalImg");
 
+  if (!modal || !img) return;
+
   img.src = url;
   modal.classList.add("show");
 };
 
-document.getElementById("imageModal")
-  .addEventListener("click", ()=>{
-    document.getElementById("imageModal")
-      .classList.remove("show");
-});
-  
+const modalEl = document.getElementById("imageModal");
+if (modalEl) {
+  modalEl.addEventListener("click", ()=>{
+    modalEl.classList.remove("show");
+  });
+}
 </script>
 <div id="imageModal" class="modal-overlay">
   <img id="modalImg" class="modal-img">
 </div>  
 </body>
 </html>
+
 
 
 
