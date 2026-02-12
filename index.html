@@ -306,38 +306,50 @@ textarea{min-height:80px;resize:none}
   <h3><i class="bi bi-clock-history"></i> ประวัติงานซ่อม</h3>
 
   <!-- 🔍 ค้นหา -->
-  <input 
-    id="searchInput" 
-    placeholder="🔍 ค้นหาชื่อลูกค้า หรือ ทะเบียน"
-    style="
-      width:100%;
-      height:48px;
-      padding:0 14px;
-      border-radius:12px;
-      border:1px solid #ddd;
-      margin-bottom:12px;
-      font-size:15px;
-      box-sizing:border-box;
-    "
-  >
+<input 
+  id="searchInput" 
+  placeholder="🔍 ค้นหาชื่อลูกค้า หรือ ทะเบียน"
+  style="
+    width:100%;
+    height:48px;
+    padding:0 14px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    margin-bottom:12px;
+    font-size:15px;
+  "
+>
 
+<!-- 📅 ช่องวันที่ (แสดงอย่างเดียว) -->
+<input 
+  type="date"
+  id="searchDate"
+  style="
+    width:100%;
+    height:48px;
+    padding:0 14px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    margin-bottom:10px;
+    font-size:15px;
+  "
+>
 
-  <!-- 🔘 เลือกวันที่ + ปุ่ม -->
+<!-- 🔘 ปุ่ม 3 ปุ่ม -->
 <div style="display:flex; gap:8px; margin-bottom:12px;">
 
-  <input 
-    type="date"
-    id="searchDate"
+  <button id="openDateBtn"
     style="
       flex:1;
       height:48px;
-      padding:0 10px;
+      background:#ff9800;
+      color:#fff;
+      border:none;
       border-radius:12px;
-      border:1px solid #ddd;
-      font-size:14px;
-      box-sizing:border-box;
-    "
-  >
+      font-weight:600;
+    ">
+    📅 เลือกวันที่
+  </button>
 
   <button id="searchDateBtn"
     style="
@@ -349,7 +361,7 @@ textarea{min-height:80px;resize:none}
       border-radius:12px;
       font-weight:600;
     ">
-    ค้นหา
+    🔍 ค้นหา
   </button>
 
   <button id="clearFilterBtn"
@@ -362,7 +374,7 @@ textarea{min-height:80px;resize:none}
       border-radius:12px;
       font-weight:600;
     ">
-    ล้าง
+    ❌ ล้าง
   </button>
 
 </div>
@@ -907,7 +919,15 @@ loadBrands();
 const searchInput = document.getElementById("searchInput");
 const searchDate = document.getElementById("searchDate");
 const searchDateBtn = document.getElementById("searchDateBtn");
+const openDateBtn = document.getElementById("openDateBtn");
 
+if (openDateBtn) {
+  openDateBtn.addEventListener("click", () => {
+    searchDate.focus();
+    searchDate.click();
+  });
+}
+      
 let currentKeyword = "";
 let currentDate = "";
 
@@ -1067,6 +1087,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
