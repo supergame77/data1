@@ -130,6 +130,13 @@ textarea{min-height:80px;resize:none}
 
 <div id="historyTab" style="display:none">
 <h3><i class="bi bi-clock-history"></i> ประวัติงานซ่อม</h3>
+
+<input 
+  id="searchInput" 
+  placeholder="🔍 ค้นหาชื่อลูกค้า หรือ ทะเบียน"
+  style="width:100%;padding:10px;border-radius:12px;border:1px solid #ddd;margin-bottom:12px;"
+>
+
 <div id="historyList"></div>
 </div>
 </div>
@@ -334,8 +341,17 @@ window.loadHistory = async (keyword = "") => {
 
 window.toggleBill = function(id){
   const el = document.getElementById("bill-" + id);
+  const btn = event.target;
+
   if(!el) return;
-  el.style.display = el.style.display === "none" ? "block" : "none";
+
+  if(el.style.display === "none"){
+    el.style.display = "block";
+    btn.innerText = "❌ ซ่อนบิล";
+  }else{
+    el.style.display = "none";
+    btn.innerText = "🧾 แสดงบิล";
+  }
 };
 
 window.editData = async (id)=>{
@@ -411,6 +427,7 @@ document.getElementById("searchInput")
 </script>
 </body>
 </html>
+
 
 
 
