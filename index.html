@@ -250,20 +250,20 @@ window.saveData = async ()=>{
     if(billFile) billURL = await uploadImage(billFile, "bills");
 
     const data = {
-      name: name.value,
-      date: date.value,
-      plate: plate.value,
-      phone: phone.value,
-      brand: brand.value,
-      model: model.value,
-      year: year.value,
-      beforeDetail: beforeDetail.value,
-      afterDetail: afterDetail.value,
-      price: price.value,
-      carImage: carURL,
-      billImage: billURL,
-      createdAt: new Date().toISOString()
-    };
+  name: name.value,
+  date: date.value,
+  plate: plate.value,
+  phone: phone.value,
+  brand: brand.value,
+  model: model.value,
+  year: year.value,
+  beforedetail: beforeDetail.value,
+  afterdetail: afterDetail.value,
+  price: price.value,
+  carimage: carURL,
+  billimage: billURL,
+  createdat: new Date().toISOString()
+};
 
     if(editingId){
       await supabase.from("jobs").update(data).eq("id", editingId);
@@ -377,3 +377,4 @@ loadBrands();
 </script>
 </body>
 </html>
+
